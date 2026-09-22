@@ -1,0 +1,10 @@
+node_modules/
+dist/
+/shots/
+/research/_*
+research/cache/
+research/refs/
+*.part
+__pycache__/
+Thumbs.db
+.DS_Store
