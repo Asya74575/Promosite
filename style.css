@@ -60,28 +60,51 @@ p { margin: 0; }
 .btn--solid:hover, .btn--ghost:hover { background: #fff; border-color: #fff; color: var(--navy); }
 body.ground-light .nav .btn--ghost:hover { background: var(--navy); border-color: var(--navy); color: #fff; }
 
-/* ---------- Preloader: CSS transform animations only ---------- */
-.preloader { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: 1fr auto; padding: var(--gutter); background: var(--abyss); color: #fff; }
-.no-js .preloader { display: none; }
-.preloader__brand { align-self: start; font-family: var(--f-display); font-weight: 700; font-size: 1.4rem; letter-spacing: .08em; }
-.preloader__foot { display: grid; gap: 18px; }
-.preloader__row { display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
-.preloader__year {
-  display: inline-flex; height: 1em; overflow: hidden;
-  font-family: var(--f-display); font-weight: 700; font-size: clamp(5rem, 17vw, 15rem); line-height: 1; font-variant-numeric: tabular-nums;
+/* ---------- Shared brand-object mask: the jagged torn edge, reused by the preloader and the hero tear.
+   --tear runs 0 (fully covering, top edge above frame) в†’ 1 (fully gone, top edge below frame). Same shape
+   everywhere it appears reads as one motif; a different jagged edge per block would read as a template effect. */
+.tear-mask {
+  clip-path: polygon(
+    0%   calc(-18% + var(--tear, 0) * 132% + 0px),
+    11%  calc(-18% + var(--tear, 0) * 132% - 54px),
+    22%  calc(-18% + var(--tear, 0) * 132% + 32px),
+    33%  calc(-18% + var(--tear, 0) * 132% - 68px),
+    44%  calc(-18% + var(--tear, 0) * 132% + 22px),
+    56%  calc(-18% + var(--tear, 0) * 132% - 44px),
+    67%  calc(-18% + var(--tear, 0) * 132% + 58px),
+    78%  calc(-18% + var(--tear, 0) * 132% - 30px),
+    89%  calc(-18% + var(--tear, 0) * 132% + 46px),
+    100% calc(-18% + var(--tear, 0) * 132% + 0px),
+    100% 260%, 0% 260%
+  );
 }
-.pre-col { display: block; height: 1em; overflow: hidden; -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
-.pre-strip { display: block; will-change: transform; animation: pre-roll 1.8s cubic-bezier(.65, 0, .25, 1) .2s both; }
-@keyframes pre-roll { to { transform: translateY(calc(var(--to) * -1em)); } }
-.preloader__bar { height: 2px; overflow: hidden; background: var(--rule-dark); }
-.preloader__bar span { display: block; height: 100%; background: var(--glow); transform-origin: left; transform: scaleX(0); animation: pre-bar 7s cubic-bezier(.08, .7, .2, 1) .2s both; }
+
+/* ---------- Preloader: a darkened brick wall, DOMA sprayed on it, torn away (not slid) to start the curtain ---------- */
+.preloader { --tear: 0; position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: var(--gutter); background: var(--abyss); color: #fff; overflow: hidden; }
+.no-js .preloader { display: none; }
+.preloader__wall {
+  position: absolute; inset: 0; z-index: 0;
+  background: url("assets/img/brick-preloader.webp") center / cover no-repeat;
+  filter: grayscale(.35) brightness(.3) contrast(1.12);
+}
+.preloader__wall::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 45%, transparent 25%, rgba(0, 0, 0, .55) 80%, rgba(0, 0, 0, .88) 100%); }
+.preloader__tag {
+  position: relative; z-index: 1; rotate: -3deg;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(3.4rem, 12vw, 8.6rem); letter-spacing: .01em; color: #fff;
+  filter: url(#spray-rough) drop-shadow(0 10px 26px rgba(0, 0, 0, .55));
+}
+.preloader__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); z-index: 1; display: grid; gap: 12px; }
+.preloader__caption { color: color-mix(in srgb, #fff 70%, transparent); }
+.preloader__bar { height: 2px; overflow: hidden; background: color-mix(in srgb, #fff 16%, transparent); }
+.preloader__bar span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); animation: pre-bar 7s cubic-bezier(.08, .7, .2, 1) .2s both; }
 @keyframes pre-bar { to { transform: scaleX(.94); } }
 /* Opened from file://: explain how to start the site instead of waiting forever */
-.preloader__file { display: none; align-self: center; max-width: 62ch; color: #c9d7e4; line-height: 1.6; }
+.preloader__file { display: none; position: relative; z-index: 1; max-width: 62ch; color: #d8d2c6; line-height: 1.6; }
 .preloader__file b { color: #fff; }
-.preloader__file code { font-family: var(--f-mono); color: var(--glow); }
+.preloader__file code { font-family: var(--f-mono); color: var(--accent); }
+.preloader.is-file { clip-path: none; } /* the file:// notice must stay put, not tear away with the boot timeline */
 .preloader.is-file .preloader__file { display: block; }
-.preloader.is-file .preloader__foot { display: none; }
+.preloader.is-file .preloader__tag, .preloader.is-file .preloader__foot { display: none; }
 
 /* ---------- Navigation: colour follows the data-ground of the section underneath ---------- */
 .nav {
@@ -128,20 +151,8 @@ body.ground-light .nav::after { opacity: 1; }
 /* Covering layer: the "closed" poster on the wall. Its jagged top edge descends as --tear runs 0 в†’ 1,
    always starting fully above frame and ending fully below (so the reveal never shows a seam at rest). */
 .hero__tear {
+  /* clip-path comes from .tear-mask (shared with the preloader) via the same class on this element in index.html */
   position: absolute; inset: 0; z-index: 3; background: linear-gradient(155deg, #221f19 0%, #16130e 55%, #0b0906 100%);
-  clip-path: polygon(
-    0%   calc(-18% + var(--tear, 0) * 132% + 0px),
-    11%  calc(-18% + var(--tear, 0) * 132% - 54px),
-    22%  calc(-18% + var(--tear, 0) * 132% + 32px),
-    33%  calc(-18% + var(--tear, 0) * 132% - 68px),
-    44%  calc(-18% + var(--tear, 0) * 132% + 22px),
-    56%  calc(-18% + var(--tear, 0) * 132% - 44px),
-    67%  calc(-18% + var(--tear, 0) * 132% + 58px),
-    78%  calc(-18% + var(--tear, 0) * 132% - 30px),
-    89%  calc(-18% + var(--tear, 0) * 132% + 46px),
-    100% calc(-18% + var(--tear, 0) * 132% + 0px),
-    100% 260%, 0% 260%
-  );
 }
 .hero__tear::before {
   /* a thin torn-paper highlight riding the same jagged line, so the edge reads as ripped, not cut */

@@ -27,30 +27,26 @@
 </head>
 <body>
 
-<!-- Preloader: every motion here is a CSS transform, so it keeps running while scripts build the 3D scenes -->
-<div class="preloader" id="preloader" aria-hidden="true">
-  <span class="preloader__brand">DOMA</span>
+<!-- Hidden defs: the spray-paint roughening used by the preloader graffiti (feTurbulence + displacement, no image) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="spray-rough" x="-25%" y="-40%" width="150%" height="180%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.012 0.09" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<!-- Preloader: a darkened brick wall with the DOMA tag sprayed on it. It tears open with the same jagged edge
+     as the hero (.tear-mask, --tear driven by main.js) instead of sliding away — one motif, first use of it. -->
+<div class="preloader tear-mask" id="preloader" aria-hidden="true">
+  <div class="preloader__wall" aria-hidden="true"></div>
   <div class="preloader__file">
-    <p><b>This site needs a local server.</b> Browsers don't run its scripts and 3D scenes from a double-clicked file.
-      Double-click <code>start-demo.bat</code> (Windows) or <code>start-demo.command</code> (macOS) in this folder.</p>
+    <p><b>Нужен локальный сервер.</b> Браузер не запускает скрипты и 3D-сцены с файла, открытого двойным кликом.
+      Запустите <code>start-demo.bat</code> (Windows) или <code>start-demo.command</code> (macOS) в этой папке.</p>
   </div>
   <script>if (location.protocol === "file:") document.getElementById("preloader").classList.add("is-file");</script>
+  <span class="preloader__tag">DOMA</span>
   <div class="preloader__foot">
-    <div class="preloader__row">
-      <span class="preloader__year" id="preYear" data-from="2016" data-to="2026"></span>
-      <script>
-        // One digit strip per column, built before first paint; CSS rolls each strip by --to steps
-        (function (el) {
-          var from = el.getAttribute("data-from"), to = el.getAttribute("data-to");
-          el.innerHTML = from.split("").map(function (digit, i) {
-            var steps = Math.abs(parseInt(to.slice(0, i + 1), 10) - parseInt(from.slice(0, i + 1), 10)), cells = [];
-            for (var k = 0; k <= steps; k++) cells.push((+digit + k) % 10);
-            return '<span class="pre-col"><span class="pre-strip" style="--to:' + steps + '">' + cells.join("<br>") + "</span></span>";
-          }).join("");
-        })(document.getElementById("preYear"));
-      </script>
-      <span class="mono">DOMA by GUF · энергетики × чипсы</span>
-    </div>
+    <span class="mono preloader__caption">DOMA by GUF · энергетики × чипсы</span>
     <div class="preloader__bar"><span id="preBar"></span></div>
   </div>
 </div>
@@ -83,7 +79,7 @@
         </div>
       </div>
 
-      <div class="hero__tear" aria-hidden="true"></div>
+      <div class="hero__tear tear-mask" aria-hidden="true"></div>
       <span class="hero__tag" aria-hidden="true">DOMA</span>
 
       <div class="hero__copy" id="heroCopy">
@@ -105,89 +101,9 @@
     </div>
   </section>
 
-  <!-- 02 · About: statement + odometer stats (text of each value is its final, sourced figure) -->
-  <section class="about" id="about" data-ground="light">
-    <div class="wrap">
-      <h2 class="about__statement">A statement about the company that reads in one breath.</h2>
-      <div class="stats" role="list">
-        <div class="stat" role="listitem"><span class="stat__value" data-count>120+</span><span class="stat__label">Label for a real, sourced number</span></div>
-        <div class="stat" role="listitem"><span class="stat__value" data-count>$4.8B</span><span class="stat__label">Label for a real, sourced number</span></div>
-        <div class="stat" role="listitem"><span class="stat__value" data-count>36</span><span class="stat__label">Label for a real, sourced number</span></div>
-        <div class="stat" role="listitem"><span class="stat__value" data-count>98%</span><span class="stat__label">Label for a real, sourced number</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 03 · Pinned 3D story: scene-towers.js follows scroll progress; captions show inside their data-from/to window -->
-  <section class="story" id="story" data-ground="light">
-    <div class="story__stage">
-      <canvas class="story__canvas" id="storyCanvas" aria-hidden="true"></canvas>
-      <div class="story__progress" aria-hidden="true"><span id="storyBar"></span></div>
-      <div class="story__captions">
-        <article class="caption" data-from="0" data-to="0.3">
-          <span class="mono">01 · Chapter</span>
-          <h3>The first idea</h3>
-          <p>What the viewer should understand while the scene does this.</p>
-        </article>
-        <article class="caption" data-from="0.36" data-to="0.64">
-          <span class="mono">02 · Chapter</span>
-          <h3>The second idea</h3>
-          <p>Tie each camera move to one message, never two.</p>
-        </article>
-        <article class="caption" data-from="0.7" data-to="1.05">
-          <span class="mono">03 · Chapter</span>
-          <h3>The payoff</h3>
-          <p>End on the claim the section exists to prove.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- 04 · FAQ (sections.js initFaq): answers only from the client's published facts -->
-  <section class="faq" id="faq" data-ground="light">
-    <div class="wrap faq__grid">
-      <div class="faq__aside">
-        <h2>Questions, <span>answered</span></h2>
-        <p>Short intro to what people usually ask before they get in touch.</p>
-      </div>
-      <div class="faq__list" id="faqList">
-        <details class="qa" data-topic="about">
-          <summary><span class="qa__n mono">01</span><span class="qa__q">What does the company do?</span><span class="qa__icon" aria-hidden="true"></span></summary>
-          <div class="qa__a"><div><p>Answer written from the client's own materials.</p></div></div>
-        </details>
-        <details class="qa" data-topic="about">
-          <summary><span class="qa__n mono">02</span><span class="qa__q">Who is it for?</span><span class="qa__icon" aria-hidden="true"></span></summary>
-          <div class="qa__a"><div><p>Answer written from the client's own materials.</p></div></div>
-        </details>
-        <details class="qa" data-topic="about">
-          <summary><span class="qa__n mono">03</span><span class="qa__q">How do I get started?</span><span class="qa__icon" aria-hidden="true"></span></summary>
-          <div class="qa__a"><div><p>Answer written from the client's own materials.</p></div></div>
-        </details>
-      </div>
-    </div>
-  </section>
-
-  <!-- 05 · CTA + footer with a wordmark fitted to its letters (sections.js initWordmark) -->
-  <section class="cta" id="contact" data-ground="dark">
-    <div class="wrap">
-      <div class="cta__row">
-        <h2>Call to <em>action.</em></h2>
-        <div class="cta__side">
-          <p>Who to contact and what happens next.</p>
-          <a class="btn btn--solid" href="mailto:hello@example.com">hello@example.com</a>
-        </div>
-      </div>
-      <svg class="wordmark" id="wordmark" data-word="BRAND" data-weight="700" viewBox="0 0 1000 190" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="wordmarkFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" style="stop-color: var(--wordmark-top)"/>
-            <stop offset="1" style="stop-color: var(--wordmark-bottom)"/>
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="legal mono"><span>© 2026 Brand</span><span>Website concept · demo build</span></div>
-    </div>
-  </section>
+  <!-- Blocks 2–8 of docs/scenario.md (про бренд, продукция, преимущества, блогеры, где купить, форма, футер)
+       are not built yet. The starter's placeholder About/Story/FAQ/CTA sections were removed rather than left
+       showing unrelated English filler — see STATUS.md for the build order. -->
 
 </main>
 

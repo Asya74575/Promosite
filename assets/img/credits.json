@@ -22,5 +22,13 @@
     "licence": "client-owned product photography",
     "date_downloaded": "n/a — provided by client",
     "used_for": "Блок 1 (Hero) — пачка чипсов «Краб» №01, фон убран (white-threshold, Pillow)"
+  },
+  {
+    "file": "brick-preloader.webp",
+    "source_page": "https://unsplash.com/photos/black-and-white-brick-wall-9a58YsGiTPk",
+    "author": "see Unsplash photo page",
+    "licence": "Unsplash License (free for commercial use, no attribution required)",
+    "date_downloaded": "2026-09-22",
+    "used_for": "Прелоадер — тёмная кирпичная стена под граффити DOMA"
   }
 ]
