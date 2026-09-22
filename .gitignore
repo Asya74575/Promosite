@@ -4,6 +4,9 @@ dist/
 /research/_*
 research/cache/
 research/refs/
+research/masters/
+research/wall-textures/
+research/*.mjs
 *.part
 __pycache__/
 Thumbs.db

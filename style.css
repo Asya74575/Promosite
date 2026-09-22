@@ -3,23 +3,26 @@
    sections.css. Rebrand by changing token VALUES; the names are shared with sections.css and the JS modules. */
 
 :root {
-  --abyss: #06121f;
-  --navy: #123a5c;
-  --navy-deep: #0b2640;
-  --blue: #2f7dd1;
-  --glow: #7cc0ff;
-  --mist: #eef2f6;
-  --paper: #f7f9fb;
-  --ink: #0c1a28;
-  --steel: #5f7386;
-  --rule: #d6dee6;
-  --rule-dark: #1d4668;
-  --amber: #e9a23b;
-  --wordmark-top: #163f63;
-  --wordmark-bottom: #081f36;
+  /* DOMA by GUF — измерено с их живого сайта (doma.moscow/product): акцент #F15923, Unbounded+Inter.
+     Имена токенов оставлены как в стартере (их читают sections.css и модули), значения — бренд клиента. */
+  --abyss: #0b0b0a;
+  --navy: #201d1a;
+  --navy-deep: #050504;
+  --blue: #f15923;
+  --glow: #ff8c4a;
+  --mist: #f3efe6;
+  --paper: #f7f4ec;
+  --ink: #141311;
+  --steel: #8a8479;
+  --rule: #d9d3c4;
+  --rule-dark: #2a2722;
+  --amber: #f15923;
+  --wordmark-top: #f15923;
+  --wordmark-bottom: #7a2c0f;
+  --accent: #f15923;
 
-  --f-display: "Space Grotesk", "Segoe UI", Arial, sans-serif;
-  --f-body: "Manrope", "Segoe UI", Arial, sans-serif;
+  --f-display: "Unbounded", "Segoe UI", Arial, sans-serif;
+  --f-body: "Inter", "Segoe UI", Arial, sans-serif;
   --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 
   --d1: clamp(2.8rem, 6.2vw, 6.6rem);
@@ -98,88 +101,84 @@ body.ground-light .nav::after { opacity: 1; }
 .nav__links a:hover { opacity: 1; }
 .nav .btn { height: 42px; }
 
-/* ---------- Hero: star sky, branded globe, headline, rising sky ---------- */
-/* --globe-inset is where the WebGL sphere sits inside its square box (it depends on the camera distance in globe.js) */
-.hero {
-  position: relative; height: 260vh; --globe-inset: 3.5%; color: #fff;
-  background: radial-gradient(90% 75% at 72% 40%, var(--navy-deep) 0%, var(--abyss) 55%, color-mix(in srgb, var(--abyss) 70%, #000) 100%);
-}
+/* ---------- Hero: panel-building wall tears open (jagged clip-path, CSS var --tear driven by scroll) to
+   reveal the can + bag as the real heroes. Motif: the same jagged edge as the DOMA logo's torn speech-bubble. */
+.hero { position: relative; height: 220vh; color: #fff; background: var(--abyss); }
 .hero__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.hero__stars { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-.hero-globe {
-  position: absolute; top: 4svh; right: -10vw; z-index: 2;
-  height: 92vh; height: 92svh; aspect-ratio: 1; border-radius: 50%;
-  display: grid; pointer-events: none; user-select: none;
-}
-.hero-globe__canvas { position: relative; z-index: 2; width: 100%; height: 100%; pointer-events: auto; }
-.hero-globe__halo {
-  position: absolute; inset: calc(var(--globe-inset) - 9%); z-index: 0; border-radius: 50%;
-  background: radial-gradient(closest-side, transparent 80%, color-mix(in srgb, var(--blue) 24%, transparent) 90%, color-mix(in srgb, var(--glow) 8%, transparent) 95%, transparent 100%);
-}
-.hero-globe__body {
-  position: absolute; inset: var(--globe-inset); z-index: 1; border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%, var(--navy) 0%, var(--navy-deep) 42%, var(--abyss) 78%);
-  box-shadow:
-    inset 1.4svh 1.8svh 3.6svh -1.6svh color-mix(in srgb, var(--glow) 50%, transparent),
-    inset -3svh -4svh 8svh -2svh rgba(0, 0, 0, .55),
-    0 0 0 1px color-mix(in srgb, var(--glow) 16%, transparent),
-    0 0 7svh 1svh color-mix(in srgb, var(--blue) 20%, transparent);
-}
-.hero-globe__canopy {
-  position: absolute; z-index: 3; overflow: visible; pointer-events: none;
-  left: calc(var(--globe-inset) - 3%); top: calc(var(--globe-inset) - 3%);
-  width: calc(100% - 2 * (var(--globe-inset) - 3%)); height: calc(100% - 2 * (var(--globe-inset) - 3%));
-  filter: drop-shadow(0 0 .8svh color-mix(in srgb, var(--glow) 50%, transparent));
-}
-.hero-globe__canopy path { fill: none; stroke: url(#heroCanopyGrad); stroke-width: .5; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
-/* CSS2DRenderer centres .globe-label on its pin; the pill is pushed to the side named in data-side */
-.globe-label { position: absolute; left: 0; top: 0; display: flex; align-items: center; justify-content: center; opacity: 0; filter: blur(4px); transition: filter .3s, opacity .3s; }
-.globe-label[data-side="top"] .globe-label-text { transform: translate(0, calc(-50% - 11px)); }
-.globe-label[data-side="bottom"] .globe-label-text { transform: translate(0, calc(50% + 11px)); }
-.globe-label[data-side="left"] .globe-label-text { transform: translate(calc(-50% - 11px), 0); }
-.globe-label[data-side="right"] .globe-label-text { transform: translate(calc(50% + 11px), 0); }
-.globe-label[data-side="top-left"] .globe-label-text { transform: translate(calc(-50% - 6px), calc(-50% - 7px)); }
-.globe-label[data-side="bottom-left"] .globe-label-text { transform: translate(calc(-50% - 6px), calc(50% + 7px)); }
-.globe-label[data-side="bottom-right"] .globe-label-text { transform: translate(calc(50% + 6px), calc(50% + 7px)); }
-.globe-label.is-facing { opacity: 1; filter: blur(0); }
-.globe-label-text {
-  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; padding: 3px 10px 3px 7px; border-radius: 999px;
-  background: color-mix(in srgb, var(--abyss) 74%, transparent); border: 1px solid color-mix(in srgb, var(--glow) 32%, transparent);
-  color: #e8f3ff; font: 600 max(10px, .74rem)/1.3 var(--f-body);
-}
-.globe-label-text::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--glow); }
-.globe-label.is-hq .globe-label-text { background: color-mix(in srgb, var(--navy) 90%, transparent); border-color: color-mix(in srgb, #fff 70%, transparent); }
-.globe-label.is-hq .globe-label-text::after { content: "HQ"; margin-left: 2px; font: 500 .56rem/1 var(--f-mono); letter-spacing: .08em; color: var(--glow); }
 
-.hero__copy { position: absolute; z-index: 3; left: var(--gutter); right: var(--gutter); bottom: clamp(28px, 7vh, 76px); display: grid; gap: 26px; max-width: 900px; }
+/* Base photo: real panel-building facade, graded dark/desaturated (night courtyard, not noon stock) */
+.hero__wall {
+  position: absolute; inset: 0; z-index: 0;
+  background: url("assets/img/wall-panel-base.webp") center 32% / cover no-repeat;
+  filter: grayscale(.55) brightness(.4) contrast(1.14) sepia(.1);
+}
+.hero__wall::after {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 28%, rgba(0, 0, 0, .55) 76%, rgba(0, 0, 0, .86) 100%);
+}
+
+/* Product objects sit behind the torn layer; a smoothstep in hero-doma.js eases them in as the tear passes them */
+.hero__objects { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; }
+.hero__objects-in { position: relative; width: min(80vw, 860px); height: min(68vh, 620px); }
+.hero__can, .hero__bag { position: absolute; bottom: 6%; left: 50%; filter: drop-shadow(0 40px 60px rgba(0, 0, 0, .55)); will-change: transform, opacity; }
+.hero__can { width: min(28vw, 280px); z-index: 2; transform: translate(-108%, 0) rotate(-4deg); }
+.hero__bag { width: min(40vw, 400px); z-index: 1; transform: translate(-4%, 4%) rotate(3deg); }
+.hero__can img, .hero__bag img { width: 100%; height: auto; display: block; }
+
+/* Covering layer: the "closed" poster on the wall. Its jagged top edge descends as --tear runs 0 в†’ 1,
+   always starting fully above frame and ending fully below (so the reveal never shows a seam at rest). */
+.hero__tear {
+  position: absolute; inset: 0; z-index: 3; background: linear-gradient(155deg, #221f19 0%, #16130e 55%, #0b0906 100%);
+  clip-path: polygon(
+    0%   calc(-18% + var(--tear, 0) * 132% + 0px),
+    11%  calc(-18% + var(--tear, 0) * 132% - 54px),
+    22%  calc(-18% + var(--tear, 0) * 132% + 32px),
+    33%  calc(-18% + var(--tear, 0) * 132% - 68px),
+    44%  calc(-18% + var(--tear, 0) * 132% + 22px),
+    56%  calc(-18% + var(--tear, 0) * 132% - 44px),
+    67%  calc(-18% + var(--tear, 0) * 132% + 58px),
+    78%  calc(-18% + var(--tear, 0) * 132% - 30px),
+    89%  calc(-18% + var(--tear, 0) * 132% + 46px),
+    100% calc(-18% + var(--tear, 0) * 132% + 0px),
+    100% 260%, 0% 260%
+  );
+}
+.hero__tear::before {
+  /* a thin torn-paper highlight riding the same jagged line, so the edge reads as ripped, not cut */
+  content: ""; position: absolute; inset: 0; clip-path: inherit; opacity: .9;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 70%, #fff 10%) 0%, transparent 16px);
+}
+.hero__tag {
+  position: absolute; left: 50%; top: 25%; z-index: 4; translate: -50% -50%; rotate: -4deg;
+  font-family: var(--f-display); font-weight: 700; font-size: clamp(3.4rem, 11vw, 8.4rem); letter-spacing: -.01em;
+  color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--accent) 85%, #fff 8%); white-space: nowrap; pointer-events: none;
+}
+
+.hero__copy { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); bottom: clamp(28px, 7vh, 76px); display: grid; gap: 26px; max-width: 900px; }
 .hero__eyebrow { display: flex; gap: 10px 18px; flex-wrap: wrap; color: color-mix(in srgb, #fff 65%, transparent); }
 .hero__eyebrow b { color: #fff; font-weight: 500; }
-.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: var(--d1); line-height: .9; letter-spacing: -.02em; }
+.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: var(--d1); line-height: .96; letter-spacing: -.01em; }
 .hero h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
 .hero h1 .line > span { display: inline-block; }
-.hero h1 em { font-style: normal; color: var(--glow); }
+.hero h1 em { font-style: normal; color: var(--accent); }
 .hero__foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px 48px; flex-wrap: wrap; }
 .hero__lede { max-width: 44ch; color: color-mix(in srgb, #fff 75%, transparent); font-size: 1.08rem; }
 .hero__actions { display: flex; gap: 10px; flex-wrap: wrap; }
 /* Scroll cue: a light running down a thin track */
-.hero__cue { position: absolute; right: var(--gutter); bottom: clamp(28px, 7vh, 76px); z-index: 3; display: grid; justify-items: center; gap: 12px; color: color-mix(in srgb, #fff 65%, transparent); }
+.hero__cue { position: absolute; right: var(--gutter); bottom: clamp(28px, 7vh, 76px); z-index: 5; display: grid; justify-items: center; gap: 12px; color: color-mix(in srgb, #fff 65%, transparent); }
 .hero__cue i { position: relative; display: block; width: 1px; height: 56px; overflow: hidden; background: color-mix(in srgb, #fff 22%, transparent); }
-.hero__cue i::after { content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 40%; background: linear-gradient(transparent, var(--glow)); transform: translateY(-100%); animation: cue-run 2.2s cubic-bezier(.6, 0, .3, 1) infinite; }
+.hero__cue i::after { content: ""; position: absolute; left: 0; top: 0; width: 1px; height: 40%; background: linear-gradient(transparent, var(--accent)); transform: translateY(-100%); animation: cue-run 2.2s cubic-bezier(.6, 0, .3, 1) infinite; }
 @keyframes cue-run { to { transform: translateY(250%); } }
-/* Rising sky: covers the globe and stars; its mist continues 100vh below the box, overlapping 2px to avoid a seam */
-.hero__atmos {
-  position: absolute; inset: 0; z-index: 4; pointer-events: none; transform: translateY(100%);
-  background: linear-gradient(to top, var(--mist) 0%, var(--mist) 30%, color-mix(in srgb, var(--glow) 35%, var(--mist)) 44%, var(--blue) 60%, var(--navy) 74%, transparent 92%);
-}
-.hero__atmos::after { content: ""; position: absolute; left: 0; right: 0; top: calc(100% - 2px); height: 100vh; background: var(--mist); }
-@media (max-width: 991px) {
-  .hero { --globe-inset: 14.5%; }
-  .hero-globe { right: -45vw; }
+
+@media (prefers-reduced-motion: reduce) {
+  .hero { height: auto; }
+  .hero__stage { position: relative; height: 100svh; }
 }
 @media (max-width: 767px) {
-  .hero { --globe-inset: 13%; }
-  .hero-globe { right: auto; left: 50%; translate: -50% 0; top: -5svh; height: 76svh; }
-  .hero-globe__canvas { pointer-events: none; }
+  .hero__objects-in { width: 90vw; height: 56vh; }
+  .hero__can { width: 36vw; }
+  .hero__bag { width: 52vw; }
+  .hero__tag { font-size: clamp(2.6rem, 15vw, 4.2rem); top: 22%; }
 }
 
 /* ---------- About + odometer stats ---------- */

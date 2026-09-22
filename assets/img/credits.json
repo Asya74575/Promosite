@@ -1,0 +1,26 @@
+[
+  {
+    "file": "wall-panel-base.webp",
+    "source_page": "https://unsplash.com/photos/multistory-apartment-building-facade-with-many-windows-and-balconies-hXKPWlojfk0",
+    "author": "see Unsplash photo page",
+    "licence": "Unsplash License (free for commercial use, no attribution required)",
+    "date_downloaded": "2026-09-22",
+    "used_for": "Блок 1 (Hero) — базовая текстура панельной стены под разрывом"
+  },
+  {
+    "file": "hero-can.webp",
+    "source_page": "client material: Фото продукции/PHOTO DOMA BY GUF FMCG/DOMA-by_GUF.png",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned product photography",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 1 (Hero) — банка «Ориджинал» №01, уже с прозрачным фоном от клиента"
+  },
+  {
+    "file": "hero-bag.webp",
+    "source_page": "client material: Фото продукции/PHOTO DOMA BY GUF FMCG/preview_01.jpg",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned product photography",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 1 (Hero) — пачка чипсов «Краб» №01, фон убран (white-threshold, Pillow)"
+  }
+]

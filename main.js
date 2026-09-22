@@ -1,7 +1,7 @@
-// Starter choreography: CSS preloader → Lenis + ScrollTrigger → star sky + globe hero with a rising sky → odometer
-// stats → pinned 3D story → FAQ → CTA. Rules and patterns: .claude/skills/scroll-3d-site-playbook/references/.
-import { createStars } from "./stars.js";
-import { createGlobe } from "./globe.js";
+// DOMA by GUF choreography: CSS preloader → Lenis + ScrollTrigger → panel-wall hero that tears open (hero-doma.js)
+// → odometer stats → pinned 3D story → FAQ → CTA. Story/about/faq/cta are still starter placeholders — blocks
+// 2–8 of docs/scenario.md land in later sessions (see STATUS.md). Rules: .claude/skills/scroll-3d-site-playbook/references/.
+import { createHero } from "./hero-doma.js";
 import { createTowers } from "./scene-towers.js";
 import { initSections } from "./sections.js";
 
@@ -40,7 +40,7 @@ $$('a[href^="#"]').forEach((a) => a.addEventListener("click", (e) => {
   lenis ? lenis.scrollTo(el, { offset: 0, duration: 1.6 }) : el.scrollIntoView();
 }));
 
-let stars = null, globe = null, towers = null;
+let hero = null, towers = null;
 
 // ---------- Boot: heavy work happens behind the CSS-animated preloader ----------
 async function boot() {
@@ -49,19 +49,7 @@ async function boot() {
 
   // Fonts only refine layout; a slow font CDN must not hold the page
   await Promise.race([document.fonts ? document.fonts.ready : Promise.resolve(), wait(1500)]);
-  stars = createStars({ canvas: $("#heroStars"), reducedMotion: reduce });
-  if (!reduce) gsap.ticker.add(stars.tick);
-  try {
-    // Replace places/routes/views for the client (globe.js documents the shapes); colours follow the brand tokens
-    globe = await createGlobe({
-      container: $("#heroGlobe"), canvas: $("#globe"), reducedMotion: reduce,
-      colors: { coast: css("--glow"), land: css("--blue"), pin: css("--glow"), hq: "#ffffff", arc: css("--glow") },
-    });
-    if (!reduce) gsap.ticker.add(globe.tick);
-  } catch (err) {
-    console.warn("Globe unavailable:", err);
-    $("#heroGlobe").style.display = "none";
-  }
+  hero = createHero({ root: $("#hero"), reducedMotion: reduce });
   await frames();
   try {
     towers = createTowers({ canvas: $("#storyCanvas"), reducedMotion: reduce });
@@ -74,7 +62,7 @@ async function boot() {
   if (towers?.ready) await Promise.race([towers.ready, wait(9000)]);
   await frames();
 
-  if (reduce) { pre.remove(); globe?.renderOnce(); return; }
+  if (reduce) { pre.remove(); return; }
   await minShow;
 
   const shown = getComputedStyle(bar).transform;
@@ -82,26 +70,21 @@ async function boot() {
   gsap.timeline({ onComplete: () => { pre.remove(); lenis?.start(); ScrollTrigger.refresh(); } })
     .fromTo(bar, { scaleX: shown && shown !== "none" ? new DOMMatrix(shown).a : 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out" }, 0)
     .to(pre, { yPercent: -100, duration: 1, ease: "power4.inOut" }, 0.3)
+    .from(".hero__tag", { autoAlpha: 0, y: 20, duration: 1.1, ease: "power3.out" }, 0.5)
     .from(".hero h1 .line > span", { yPercent: 110, duration: 1.1, ease: "power4.out", stagger: 0.09 }, 0.7)
     .from(".hero__eyebrow, .hero__foot", { y: 24, autoAlpha: 0, duration: 0.9, ease: "power3.out", stagger: 0.1 }, 1.05)
-    // Globe intro: the planet rises into frame, its halo breathes in, then the arc is drawn over it
-    .from("#heroGlobe", { autoAlpha: 0, y: 70, scale: 0.94, duration: 1.6, ease: "power3.out" }, 0.45)
-    .from(".hero-globe__halo", { autoAlpha: 0, scale: 0.9, duration: 1.8, ease: "sine.out" }, 0.7)
-    .fromTo("#heroCanopy", { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.7, ease: "power2.inOut" }, 1)
-    .from(".globe-label-text", { autoAlpha: 0, y: 8, duration: 0.6, ease: "power2.out", stagger: 0.06 }, 1.2)
     .from(".hero__cue", { autoAlpha: 0, duration: 0.8 }, 1.6);
 }
 
 // ---------- Scroll-linked scenes ----------
 function initScroll() {
-  // Nav colour follows the section under the bar; the hero reads as light once its sky has risen
-  let heroP = 0;
+  // Nav colour follows the [data-ground] of the section under the bar (the hero stays dark throughout)
   const grounds = $$("[data-ground]");
   const updateGround = () => {
     let light = false;
     for (const sec of grounds) {
       const r = sec.getBoundingClientRect();
-      if (r.top <= 40 && r.bottom > 40) { light = sec.id === "hero" ? heroP > 0.82 : sec.dataset.ground === "light"; break; }
+      if (r.top <= 40 && r.bottom > 40) { light = sec.dataset.ground === "light"; break; }
     }
     document.body.classList.toggle("ground-light", light);
   };
@@ -138,22 +121,10 @@ function initScroll() {
   // FAQ, fitted wordmark and any other sections.js pattern present in the markup
   initSections({ gsap, ScrollTrigger, lenis, reduce });
 
-  if (reduce) { towers?.setProgress(0.5); stars?.setProgress(0); return; }
+  if (reduce) { towers?.setProgress(0.5); return; }
 
-  // Hero: the sky rises over the globe; the stars lift and fade under the atmosphere
-  const atmos = $("#atmos"), heroCopy = $("#heroCopy");
-  const heroUpdate = (p) => {
-    stars?.setProgress(p);
-    // y: 0 clears the px offset GSAP parses from the CSS translateY(100%) start state
-    gsap.set(atmos, { y: 0, yPercent: 100 - 170 * seg(p, 0.38, 1) });
-    gsap.set(heroCopy, { autoAlpha: 1 - seg(p, 0, 0.3), y: -60 * seg(p, 0, 0.3) });
-    heroP = p;
-    queueGround();
-  };
-  heroUpdate(0);
-  ScrollTrigger.create({ trigger: "#hero", start: "top top", end: "bottom bottom", scrub: true, onUpdate: ({ progress }) => heroUpdate(progress) });
-  // Opacity only: dimming a dark globe body would leave a black disc over the stars
-  gsap.to("#heroGlobe", { autoAlpha: 0, scale: 0.97, ease: "none", scrollTrigger: { trigger: "#hero", start: "top top-=20%", end: "center top", scrub: true } });
+  // Hero: the wall tears open as the section scrolls past (hero-doma.js owns the clip-path + product parallax)
+  ScrollTrigger.create({ trigger: "#hero", start: "top top", end: "bottom bottom", scrub: true, onUpdate: ({ progress }) => hero?.setProgress(progress) });
 
   // Pinned story: one trigger feeds the 3D scene, the caption windows and the progress bar
   const captions = $$(".caption"), storyBar = $("#storyBar");

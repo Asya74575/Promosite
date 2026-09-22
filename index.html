@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Brand — website concept</title>
-<meta name="description" content="TODO: one sentence on what the company does and for whom.">
+<title>DOMA by GUF — website concept</title>
+<meta name="description" content="DOMA by GUF: энергетики и чипсы от музыкального лейбла DOMA — концепт лендинга продукции.">
 <!-- Concept demo: keep it out of search results. Remove before a production launch. -->
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:,"><!-- TODO: brand favicon (the empty one stops a 404 on /favicon.ico) -->
@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <!-- Fonts load without blocking first paint: a slow font CDN must never freeze the preloader -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="sections.css">
 <script>document.documentElement.classList.remove("no-js");</script>
@@ -29,7 +29,7 @@
 
 <!-- Preloader: every motion here is a CSS transform, so it keeps running while scripts build the 3D scenes -->
 <div class="preloader" id="preloader" aria-hidden="true">
-  <span class="preloader__brand">BRAND</span>
+  <span class="preloader__brand">DOMA</span>
   <div class="preloader__file">
     <p><b>This site needs a local server.</b> Browsers don't run its scripts and 3D scenes from a double-clicked file.
       Double-click <code>start-demo.bat</code> (Windows) or <code>start-demo.command</code> (macOS) in this folder.</p>
@@ -49,63 +49,59 @@
           }).join("");
         })(document.getElementById("preYear"));
       </script>
-      <span class="mono">Brand legal name · tagline</span>
+      <span class="mono">DOMA by GUF · энергетики × чипсы</span>
     </div>
     <div class="preloader__bar"><span id="preBar"></span></div>
   </div>
 </div>
 
 <header class="nav">
-  <a class="brand" href="#top" aria-label="Brand home">BRAND</a>
+  <a class="brand" href="#top" aria-label="DOMA home">DOMA</a>
   <nav aria-label="Primary">
     <ul class="nav__links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#story">Story</a></li>
+      <li><a href="#about">О нас</a></li>
+      <li><a href="#story">Продукция</a></li>
       <li><a href="#faq">FAQ</a></li>
     </ul>
   </nav>
-  <a class="btn btn--ghost" href="#contact">Contact</a>
+  <a class="btn btn--ghost" href="#contact">Стать партнёром</a>
 </header>
 
 <main id="top">
 
-  <!-- 01 · Hero: star sky (stars.js), branded globe (globe.js), headline; the sky rises as you scroll -->
+  <!-- 01 · Hero: real panel-wall photo + jagged "torn poster" layer (hero-doma.js) that peels open on scroll to
+       reveal the can + bag (client's own product photography, alpha-cut). #product/#partner point at blocks not
+       built yet this session — see STATUS.md. -->
   <section class="hero" id="hero" data-ground="dark">
-    <div class="hero__stage">
-      <canvas class="hero__stars" id="heroStars" aria-hidden="true"></canvas>
-      <div class="hero-globe" id="heroGlobe" aria-hidden="true">
-        <div class="hero-globe__halo"></div>
-        <div class="hero-globe__body"></div>
-        <canvas class="hero-globe__canvas" id="globe"></canvas>
-        <svg class="hero-globe__canopy" viewBox="0 0 100 100" focusable="false">
-          <defs>
-            <linearGradient id="heroCanopyGrad" x1="0" y1="1" x2="1" y2="0">
-              <stop offset="0" style="stop-color: var(--blue); stop-opacity: 0"/>
-              <stop offset=".35" style="stop-color: var(--blue)"/>
-              <stop offset="1" style="stop-color: var(--glow)"/>
-            </linearGradient>
-          </defs>
-          <path id="heroCanopy" pathLength="1" d="M 9.9 78.1 A 49 49 0 1 1 96 33.2"/>
-        </svg>
+    <div class="hero__stage" id="heroStage">
+      <div class="hero__wall" aria-hidden="true"></div>
+
+      <div class="hero__objects">
+        <div class="hero__objects-in">
+          <div class="hero__can"><img src="assets/img/hero-can.webp" alt="Банка DOMA Energy Drink «Ориджинал» №01" loading="eager"></div>
+          <div class="hero__bag"><img src="assets/img/hero-bag.webp" alt="Пачка чипсов DOMA «Краб» №01" loading="eager"></div>
+        </div>
       </div>
 
+      <div class="hero__tear" aria-hidden="true"></div>
+      <span class="hero__tag" aria-hidden="true">DOMA</span>
+
       <div class="hero__copy" id="heroCopy">
-        <p class="hero__eyebrow mono"><b>Category</b><span>Since 20XX</span><span>City, Country</span></p>
+        <p class="hero__eyebrow mono"><b>DOMA by GUF</b><span>Энергетики × Чипсы</span><span>Дроп №01–04</span></p>
         <h1>
-          <span class="line"><span>A headline that</span></span>
-          <span class="line"><span>states the</span></span>
-          <span class="line"><span><em>promise</em></span></span>
+          <span class="line"><span>Заряжай день.</span></span>
+          <span class="line"><span>Лови вкус.</span></span>
+          <span class="line"><span>Живи на <em>полной</em>.</span></span>
         </h1>
         <div class="hero__foot">
-          <p class="hero__lede">One or two sentences: what the company does, for whom, and the single proof point that matters most.</p>
+          <p class="hero__lede">Энергетики, чипсы и скоро мохито — всё, что нужно для твоего ритма.</p>
           <div class="hero__actions">
-            <a class="btn btn--solid" href="#contact">Primary action</a>
-            <a class="btn btn--ghost" href="#story">See how it works</a>
+            <a class="btn btn--solid" href="#product">Смотреть продукцию</a>
+            <a class="btn btn--ghost" href="#partner">Стать партнёром</a>
           </div>
         </div>
       </div>
       <span class="hero__cue mono" aria-hidden="true"><i></i>Scroll</span>
-      <div class="hero__atmos" id="atmos"></div>
     </div>
   </section>
 
