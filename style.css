@@ -23,28 +23,85 @@
 
   --f-display: "Unbounded", "Segoe UI", Arial, sans-serif;
   --f-body: "Inter", "Segoe UI", Arial, sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  /* Labels use Inter (tracked caps), not a separate mono typeface — JetBrains Mono read as a generic coding
+     font with no tie to the brand; brand.md's own "trafaret/marker font for labels" TODO was never picked
+     either, so Inter is the safe default until (or instead of) a fourth face gets chosen. */
+  --f-mono: "Inter", "Segoe UI", Arial, sans-serif;
 
-  --d1: clamp(2.8rem, 6.2vw, 6.6rem);
-  --d2: clamp(2.3rem, 5vw, 5rem);
-  --d3: clamp(1.5rem, 2.5vw, 2.3rem);
-  --t-small: .9rem;
-  --t-mono: .6875rem;
+  /* Type scale (docs/typography.md): one token per text style, min at 390px → max at ~1600px. */
+  --t-display: clamp(3.5rem, 2.2rem + 4.5vw, 6rem);       /* 56 → 96  декоративные номера №01 / 01 */
+  --t-h1: clamp(2rem, 1.3rem + 2.6vw, 3.5rem);             /* 32 → 56  заголовок hero */
+  --t-h2: clamp(1.625rem, 1.05rem + 2.3vw, 3rem);          /* 26 → 48  заголовок секции */
+  --t-h3: clamp(1.25rem, 1rem + .9vw, 1.75rem);            /* 20 → 28  заголовок карточки / товара */
+  --t-h4: clamp(1.0625rem, .95rem + .45vw, 1.375rem);      /* 17 → 22  табы, короткие акцентные подписи */
+  --t-lede: clamp(.875rem, .82rem + .22vw, 1rem);          /* 14 → 16  лид (Inter bold caps) */
+  --t-body: 1rem;                                          /* 16       основной текст */
+  --t-small: .875rem;                                      /* 14       второстепенный текст */
+  --t-label: .75rem;                                       /* 12       метки, кнопки, навигация (caps) */
   --gutter: clamp(16px, 3.2vw, 48px);
-  --nav-h: 76px;
+  --nav-h: 90px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 html { background: var(--mist); }
 html.lenis, html.lenis body { height: auto; }
-body { margin: 0; background: var(--mist); color: var(--ink); font: 400 1.0625rem/1.6 var(--f-body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body { margin: 0; background: var(--mist); color: var(--ink); font: 400 var(--t-body)/1.6 var(--f-body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
 img, canvas { display: block; max-width: 100%; }
+
+/* One WebGL context for the whole page (world.js) — fixed behind everything. Content must be explicitly
+   promoted to a positioned stacking context with z-index above it, or CSS painting order puts a fixed,
+   z-indexed canvas ABOVE static in-flow content regardless of DOM order (see architecture.md Variant B). */
+.world { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+main, footer { position: relative; z-index: 1; }
 a { color: inherit; }
 button { font: inherit; }
 :focus-visible { outline: 2px solid var(--glow); outline-offset: 3px; }
 h1, h2, h3, h4 { margin: 0; text-wrap: balance; }
 p { margin: 0; }
-.mono { font-family: var(--f-mono); font-size: var(--t-mono); letter-spacing: .08em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+/* ---------- Typography: every text style of the site is defined here, once (docs/typography.md) ----------
+   Components below and in sections.css set only colour/spacing — never font-size/line-height/letter-spacing. */
+/* Display — декоративные номера (контурные / фоновые) */
+.product__n, .perks__n {
+  font-family: var(--f-display); font-weight: 700; font-size: var(--t-display); line-height: .85; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums; text-transform: none;
+}
+/* H1 — один на страницу, hero */
+.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: var(--t-h1); line-height: 1; letter-spacing: -.01em; text-transform: uppercase; }
+/* H2 — заголовок секции */
+.product__title, .about__title, .retailWall__title, .perks__title, .insta__title {
+  font-family: var(--f-display); font-weight: 700; font-size: var(--t-h2); line-height: 1.02; letter-spacing: -.01em;
+  text-transform: uppercase; overflow-wrap: normal;
+}
+/* H3 — заголовок карточки / товара (строчные: это фраза, а не лозунг) */
+.perks__card h3, .product__name {
+  font-family: var(--f-display); font-weight: 700; font-size: var(--t-h3); line-height: 1.15; letter-spacing: -.005em; text-transform: none;
+}
+/* Заголовок карточки «Преимуществ» — Inter Bold 16px (телефон 14px), интерлиньяж 150%, трекинг 0, капс (макет пользователя 2026-09-24) */
+.perks__card h3 { font-family: var(--f-body); font-weight: 700; font-size: var(--t-body); line-height: 1.5; letter-spacing: 0; text-transform: uppercase; }
+@media (max-width: 820px) { .perks__card h3 { font-size: var(--t-small); } }
+/* Название вкуса в ленте «Продукции» — капсом (просьба пользователя 2026-09-24), остальное как у H3 */
+.product__name { text-transform: uppercase; }
+/* H4 — табы категорий, короткие акцентные подписи */
+.product__cat, .product__cat--soon, .footer__brand, .creators__more-t {
+  font-family: var(--f-display); font-weight: 700; font-size: var(--t-h4); line-height: 1.2; letter-spacing: 0; text-transform: uppercase;
+}
+/* Lede — лид под заголовком: Inter bold caps */
+.hero__lede, .retailWall__lede, .about__lede, .partner__lede, .insta__handle {
+  font-family: var(--f-body); font-weight: 700; font-size: var(--t-lede); line-height: 1.5; letter-spacing: .01em; text-transform: uppercase;
+}
+/* Body — основной текст (наследуется от body): 16/1.6 Inter 400 */
+.about__text, .perks__card p { font-size: var(--t-body); line-height: 1.6; }
+/* Small — второстепенный текст; 600 — короткие имена/подписи, 400 — фразы */
+.product__flavor-name, .creators__cap b { font-family: var(--f-body); font-weight: 600; font-size: var(--t-small); line-height: 1.3; }
+.product__facts-list, .partner__check, .footer__legal, .preloader__caption {
+  font-family: var(--f-body); font-weight: 400; font-size: var(--t-small); line-height: 1.5; letter-spacing: 0;
+}
+/* Label — метки, кнопки, навигация, теги: Inter 600 caps с разрядкой */
+.mono, .btn, .nav__links a, .perks__tag, .product__facts-btn, .product__cat--soon i {
+  font-family: var(--f-mono); font-weight: 600; font-size: var(--t-label); line-height: 1.2; letter-spacing: .08em; text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+}
+
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .wrap { padding-inline: var(--gutter); }
 [hidden] { display: none !important; }
@@ -53,16 +110,92 @@ p { margin: 0; }
 .btn {
   display: inline-flex; align-items: center; gap: .75em; height: 50px; padding-inline: 24px;
   border-radius: 999px; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer;
-  font-family: var(--f-mono); font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; text-decoration: none;
+  text-decoration: none;
   transition: background-color .25s, color .25s, border-color .25s;
 }
 .btn--solid { background: var(--blue); border-color: var(--blue); color: #fff; }
 .btn--solid:hover, .btn--ghost:hover { background: #fff; border-color: #fff; color: var(--navy); }
 body.ground-light .nav .btn--ghost:hover { background: var(--navy); border-color: var(--navy); color: #fff; }
 
-/* ---------- Shared brand-object mask: the jagged torn edge, reused by the preloader and the hero tear.
-   --tear runs 0 (fully covering, top edge above frame) в†’ 1 (fully gone, top edge below frame). Same shape
-   everywhere it appears reads as one motif; a different jagged edge per block would read as a template effect. */
+/* ---------- Preloader: a red brick wall, DOMA tagged on it, struck by lightning and torn open — no glow/neon
+   anywhere (brand.md: matte street tones only), a grain layer over the whole thing so it reads as sprayed on
+   a real wall, not a vector graphic. ---------- */
+.preloader { --tear: 0; position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: var(--gutter); background: var(--abyss); color: #fff; overflow: hidden; }
+.no-js .preloader { display: none; }
+.preloader__wall {
+  position: absolute; inset: 0; z-index: 0;
+  background: url("assets/img/brick-preloader.webp") center / cover no-repeat;
+  filter: grayscale(.15) brightness(.44) contrast(1.1);
+}
+.preloader__wall::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 45%, transparent 20%, rgba(0, 0, 0, .62) 78%, rgba(0, 0, 0, .9) 100%); }
+/* Film-grain layer (feTurbulence tile, no image file) over the whole preloader — the difference between
+   "vector graphic" and "sprayed on a real wall" per the poster references */
+.preloader__grain {
+  position: absolute; inset: -2%; z-index: 3; opacity: .22; mix-blend-mode: overlay; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+.preloader__tag-wrap {
+  position: relative; z-index: 1; width: min(90vw, 900px); aspect-ratio: 1000 / 340; rotate: -3deg;
+}
+.preloader__tag-half { position: absolute; inset: 0; width: 100%; height: 100%; display: grid; place-items: center; overflow: visible; }
+.preloader__tag-half--top { clip-path: inset(0 0 48% 0); }
+.preloader__tag-half--bottom { clip-path: inset(48% 0 0 0); }
+/* DOMA as real Unbounded type dressed as a spray stencil: heavy black stroke behind the paper-white fill,
+   tight negative tracking so the letters read as one tag, not a headline. */
+.preloader__word {
+  grid-area: 1 / 1; display: flex; line-height: .82;
+  font-family: var(--f-display); font-weight: 900; font-size: clamp(3.6rem, 15vw, 11rem); letter-spacing: -.03em;
+  color: #f7f4ec; -webkit-text-stroke: 7px #0b0b0a; paint-order: stroke fill;
+  filter: drop-shadow(0 8px 0 rgba(0, 0, 0, .5));
+}
+.preloader__word .pl-letter { display: inline-block; position: relative; transform-origin: center; }
+.preloader__word .pl-letter:nth-child(1) { top: 4px; transform: rotate(-4deg); }
+.preloader__word .pl-letter:nth-child(2) { top: -6px; transform: rotate(2deg); }
+.preloader__word .pl-letter:nth-child(3) { top: 2px; transform: rotate(-2deg); }
+.preloader__word .pl-letter:nth-child(4) { top: -4px; transform: rotate(4deg); }
+.preloader__deco { grid-area: 1 / 1; position: relative; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.preloader__deco .pl-letter { transform-box: fill-box; transform-origin: center; }
+/* Full screen height, centred on the strike point (55% down, matching the reveal centre) — not boxed to the
+   wordmark. Flat fill, no blur/glow: a hard practical flash, not a magic-neon bolt. */
+.preloader__bolt {
+  position: absolute; z-index: 2; left: 50%; top: 50%; height: 128vh; width: 44vh; max-width: 60vw;
+  translate: -50% -55%; opacity: 0; pointer-events: none;
+}
+.preloader__flash { position: absolute; inset: 0; z-index: 2; background: #fff; opacity: 0; pointer-events: none; }
+.preloader__burst {
+  position: absolute; z-index: 2; left: 50%; top: 55%; width: 340px; height: 340px; margin: -170px 0 0 -170px;
+  opacity: 0; pointer-events: none;
+}
+.preloader__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); z-index: 1; display: grid; gap: 12px; }
+.preloader__caption { color: color-mix(in srgb, #fff 70%, transparent); }
+/* Opened from file://: explain how to start the site instead of waiting forever */
+.preloader__file { display: none; position: relative; z-index: 1; max-width: 62ch; color: #d8d2c6; line-height: 1.6; }
+.preloader__file b { color: #fff; }
+.preloader__file code { font-family: var(--f-mono); color: var(--accent); }
+.preloader.is-file .preloader__file { display: block; }
+.preloader.is-file .preloader__tag-wrap, .preloader.is-file .preloader__foot { display: none; }
+
+/* ---------- Navigation: colour follows the data-ground of the section underneath ---------- */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding-inline: var(--gutter); color: #fff; background: var(--abyss); transition: color .35s, background-color .35s;
+}
+body.ground-light .nav { color: var(--navy); background: var(--mist); }
+.brand { display: flex; align-items: center; text-decoration: none; }
+.brand__mark { height: 100px; width: auto; display: block; }
+/* logo.svg is white ink with a soft dark drop-shadow, baked for a dark stage — on a light section invert it
+   so the mark stays dark-on-light instead of vanishing like the plain-text wordmark used to */
+body.ground-light .brand__mark { filter: invert(1); }
+.nav__links { display: flex; gap: 30px; margin: 0; padding: 0; list-style: none; }
+.nav__links a { text-decoration: none; opacity: .8; }
+.nav__links a:hover { opacity: 1; }
+.nav .btn { height: 42px; }
+
+/* ---------- Shared brand-object mask: the jagged torn edge, used by the hero tear (was also shared with the
+   preloader before its 2026-09-24 lightning-strike redesign — kept here since the hero still uses it).
+   --tear runs 0 (fully covering, top edge above frame) → 1 (fully gone, top edge below frame). */
 .tear-mask {
   clip-path: polygon(
     0%   calc(-18% + var(--tear, 0) * 132% + 0px),
@@ -79,102 +212,39 @@ body.ground-light .nav .btn--ghost:hover { background: var(--navy); border-color
   );
 }
 
-/* ---------- Preloader: a darkened brick wall, DOMA sprayed on it, torn away (not slid) to start the curtain ---------- */
-.preloader { --tear: 0; position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: var(--gutter); background: var(--abyss); color: #fff; overflow: hidden; }
-.no-js .preloader { display: none; }
-.preloader__wall {
-  position: absolute; inset: 0; z-index: 0;
-  background: url("assets/img/brick-preloader.webp") center / cover no-repeat;
-  filter: grayscale(.35) brightness(.3) contrast(1.12);
-}
-.preloader__wall::after { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 50% 45%, transparent 25%, rgba(0, 0, 0, .55) 80%, rgba(0, 0, 0, .88) 100%); }
-.preloader__tag {
-  position: relative; z-index: 1; rotate: -3deg;
-  font-family: var(--f-display); font-weight: 700; font-size: clamp(3.4rem, 12vw, 8.6rem); letter-spacing: .01em; color: #fff;
-  filter: url(#spray-rough) drop-shadow(0 10px 26px rgba(0, 0, 0, .55));
-}
-.preloader__foot { position: absolute; left: var(--gutter); right: var(--gutter); bottom: var(--gutter); z-index: 1; display: grid; gap: 12px; }
-.preloader__caption { color: color-mix(in srgb, #fff 70%, transparent); }
-.preloader__bar { height: 2px; overflow: hidden; background: color-mix(in srgb, #fff 16%, transparent); }
-.preloader__bar span { display: block; height: 100%; background: var(--accent); transform-origin: left; transform: scaleX(0); animation: pre-bar 7s cubic-bezier(.08, .7, .2, 1) .2s both; }
-@keyframes pre-bar { to { transform: scaleX(.94); } }
-/* Opened from file://: explain how to start the site instead of waiting forever */
-.preloader__file { display: none; position: relative; z-index: 1; max-width: 62ch; color: #d8d2c6; line-height: 1.6; }
-.preloader__file b { color: #fff; }
-.preloader__file code { font-family: var(--f-mono); color: var(--accent); }
-.preloader.is-file { clip-path: none; } /* the file:// notice must stay put, not tear away with the boot timeline */
-.preloader.is-file .preloader__file { display: block; }
-.preloader.is-file .preloader__tag, .preloader.is-file .preloader__foot { display: none; }
-
-/* ---------- Navigation: colour follows the data-ground of the section underneath ---------- */
-.nav {
-  position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--nav-h);
-  display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding-inline: var(--gutter); color: #fff; transition: color .35s;
-}
-body.ground-light .nav { color: var(--navy); }
-.nav::before, .nav::after { content: ""; position: absolute; inset: 0 0 -28px 0; z-index: -1; pointer-events: none; transition: opacity .35s; }
-.nav::before { background: linear-gradient(to bottom, color-mix(in srgb, var(--abyss) 94%, transparent), color-mix(in srgb, var(--abyss) 70%, transparent) 60%, transparent); }
-.nav::after { background: linear-gradient(to bottom, color-mix(in srgb, var(--mist) 96%, transparent), color-mix(in srgb, var(--mist) 78%, transparent) 60%, transparent); opacity: 0; }
-body.ground-light .nav::before { opacity: 0; }
-body.ground-light .nav::after { opacity: 1; }
-.brand { font-family: var(--f-display); font-weight: 700; font-size: 1.15rem; letter-spacing: .08em; text-decoration: none; }
-.nav__links { display: flex; gap: 30px; margin: 0; padding: 0; list-style: none; }
-.nav__links a { font-family: var(--f-mono); font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; text-decoration: none; opacity: .8; }
-.nav__links a:hover { opacity: 1; }
-.nav .btn { height: 42px; }
-
-/* ---------- Hero: panel-building wall tears open (jagged clip-path, CSS var --tear driven by scroll) to
-   reveal the can + bag as the real heroes. Motif: the same jagged edge as the DOMA logo's torn speech-bubble. */
-.hero { position: relative; height: 220vh; color: #fff; background: var(--abyss); }
+/* ---------- Hero v2: тёмная product-stage (scenario.md) — a world.js chapter (hero-doma.js) draws the can +
+   pack as camera-facing sprites into this stage's rectangle on the shared canvas; a real 3D scene, not a photo
+   wall. No opaque section background here: the canvas sits behind `main` (z-index 0 vs 1) and must show through
+   the whole stage, or it silently hides the sprites again the way it did on the first pass (qa/hero-debug2.mjs
+   2026-09-24). No DOM reveal layer either (tear-mask removed 2026-09-24 — its partially-open jagged edge read as
+   an unwanted triangle shape sitting in the frame, see STATUS.md): the stage is plain dark end to end,
+   hero-doma.js fades and rises the objects in directly instead. ---------- */
+.hero { position: relative; height: 558vh; color: #fff; }  /* hero + переезд продукта + колесо карточек «Преимущества» (perks.js); колесо стоит на картах 3+4 и отпускает страницу */
 .hero__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 
-/* Base photo: real panel-building facade, graded dark/desaturated (night courtyard, not noon stock) */
-.hero__wall {
-  position: absolute; inset: 0; z-index: 0;
-  background: url("assets/img/wall-panel-base.webp") center 32% / cover no-repeat;
-  filter: grayscale(.55) brightness(.4) contrast(1.14) sepia(.1);
+/* Scan-line: one accent-coloured sweep across the stage the moment the product is revealed (brand.md 2026-09-24 —
+   echoes the real client Reel's rentgen/CT-scan effect, kept to a single line, not a full HUD overlay). */
+.hero__scan {
+  position: absolute; left: 0; right: 0; top: -6%; z-index: 5; height: 2px; opacity: 0; pointer-events: none;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 85%, #fff 15%) 50%, transparent);
+  box-shadow: 0 0 24px 4px color-mix(in srgb, var(--accent) 70%, transparent);
 }
-.hero__wall::after {
-  content: ""; position: absolute; inset: 0;
-  background: radial-gradient(120% 90% at 50% 40%, transparent 28%, rgba(0, 0, 0, .55) 76%, rgba(0, 0, 0, .86) 100%);
-}
+/* Слой банки и пачки поверх карточек «Преимуществ» (hero-doma.js): карточки проезжают за продуктом. Тот же z-index,
+   что у .perks, но стоит после него в DOM — поэтому выше. Скан-линия поднята над ним, чтобы в hero она по-прежнему
+   проходила поверх продукта. */
+.hero__front { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; }
 
-/* Product objects sit behind the torn layer; a smoothstep in hero-doma.js eases them in as the tear passes them */
-.hero__objects { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; }
-.hero__objects-in { position: relative; width: min(80vw, 860px); height: min(68vh, 620px); }
-.hero__can, .hero__bag { position: absolute; bottom: 6%; left: 50%; filter: drop-shadow(0 40px 60px rgba(0, 0, 0, .55)); will-change: transform, opacity; }
-.hero__can { width: min(28vw, 280px); z-index: 2; transform: translate(-108%, 0) rotate(-4deg); }
-.hero__bag { width: min(40vw, 400px); z-index: 1; transform: translate(-4%, 4%) rotate(3deg); }
-.hero__can img, .hero__bag img { width: 100%; height: auto; display: block; }
-
-/* Covering layer: the "closed" poster on the wall. Its jagged top edge descends as --tear runs 0 в†’ 1,
-   always starting fully above frame and ending fully below (so the reveal never shows a seam at rest). */
-.hero__tear {
-  /* clip-path comes from .tear-mask (shared with the preloader) via the same class on this element in index.html */
-  position: absolute; inset: 0; z-index: 3; background: linear-gradient(155deg, #221f19 0%, #16130e 55%, #0b0906 100%);
-}
-.hero__tear::before {
-  /* a thin torn-paper highlight riding the same jagged line, so the edge reads as ripped, not cut */
-  content: ""; position: absolute; inset: 0; clip-path: inherit; opacity: .9;
-  background: linear-gradient(to bottom, color-mix(in srgb, var(--accent) 70%, #fff 10%) 0%, transparent 16px);
-}
-.hero__tag {
-  position: absolute; left: 50%; top: 25%; z-index: 4; translate: -50% -50%; rotate: -4deg;
-  font-family: var(--f-display); font-weight: 700; font-size: clamp(3.4rem, 11vw, 8.4rem); letter-spacing: -.01em;
-  color: transparent; -webkit-text-stroke: 2px color-mix(in srgb, var(--accent) 85%, #fff 8%); white-space: nowrap; pointer-events: none;
-}
-
-.hero__copy { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); bottom: clamp(28px, 7vh, 76px); display: grid; gap: 26px; max-width: 900px; }
-.hero__eyebrow { display: flex; gap: 10px 18px; flex-wrap: wrap; color: color-mix(in srgb, #fff 65%, transparent); }
-.hero__eyebrow b { color: #fff; font-weight: 500; }
-.hero h1 { font-family: var(--f-display); font-weight: 700; font-size: var(--d1); line-height: .96; letter-spacing: -.01em; }
+/* Текст hero по центру экрана по вертикали (в зоне под навигацией), слева — продукт кадрирован правее. */
+.hero__copy { position: absolute; z-index: 5; left: var(--gutter); right: var(--gutter); top: var(--nav-h); bottom: 0; display: grid; align-content: center; gap: 10px; max-width: 900px; }  /* заголовок → подзаголовок 10px */
 .hero h1 .line { display: block; overflow: hidden; padding-bottom: .06em; }
+.hero h1 .line:last-child { margin-bottom: -.06em; } /* запас под маску reveal не входит в отступ до подзаголовка */
 .hero h1 .line > span { display: inline-block; }
-.hero h1 em { font-style: normal; color: var(--accent); }
-.hero__foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px 48px; flex-wrap: wrap; }
-.hero__lede { max-width: 44ch; color: color-mix(in srgb, #fff 75%, transparent); font-size: 1.08rem; }
+.hero__foot { display: flex; flex-direction: column; align-items: flex-start; gap: 32px; }  /* подзаголовок → кнопка 32px */
+.hero__lede {
+  max-width: 44ch; color: color-mix(in srgb, #fff 75%, transparent);
+}
 .hero__actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero__actions .btn { width: 390px; max-width: 100%; height: 60px; justify-content: center; }
 /* Scroll cue: a light running down a thin track */
 .hero__cue { position: absolute; right: var(--gutter); bottom: clamp(28px, 7vh, 76px); z-index: 5; display: grid; justify-items: center; gap: 12px; color: color-mix(in srgb, #fff 65%, transparent); }
 .hero__cue i { position: relative; display: block; width: 1px; height: 56px; overflow: hidden; background: color-mix(in srgb, #fff 22%, transparent); }
@@ -185,73 +255,20 @@ body.ground-light .nav::after { opacity: 1; }
   .hero { height: auto; }
   .hero__stage { position: relative; height: 100svh; }
 }
-@media (max-width: 767px) {
-  .hero__objects-in { width: 90vw; height: 56vh; }
-  .hero__can { width: 36vw; }
-  .hero__bag { width: 52vw; }
-  .hero__tag { font-size: clamp(2.6rem, 15vw, 4.2rem); top: 22%; }
-}
-
-/* ---------- About + odometer stats ---------- */
-.about { background: var(--mist); padding-block: clamp(90px, 14vh, 160px); }
-.about__statement { max-width: 20ch; font-family: var(--f-display); font-weight: 700; font-size: var(--d2); line-height: .95; letter-spacing: -.02em; color: var(--navy); }
-.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(56px, 9vh, 100px); border-top: 2px solid var(--navy); }
-.stat { display: grid; gap: 10px; align-content: start; padding: 26px 22px 0 0; }
-.stat + .stat { padding-left: 22px; border-left: 1px solid var(--rule); }
-.stat__value { font-family: var(--f-display); font-weight: 700; font-size: clamp(2.5rem, 4.4vw, 4.4rem); line-height: .9; color: var(--navy); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.stat__label { max-width: 24ch; color: var(--steel); line-height: 1.4; }
-[data-count].odo { display: flex; align-items: flex-start; line-height: 1; }
-.odo__col, .odo__sym { display: block; height: 1em; }
-.odo__col { overflow: hidden; -webkit-mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(transparent, #000 10%, #000 90%, transparent); }
-.odo__strip { display: flex; flex-direction: column; will-change: transform; }
-.odo__strip > span { display: block; height: 1em; text-align: center; }
-
-/* ---------- Pinned 3D story ---------- */
-.story { position: relative; height: 520vh; background: var(--mist); }
-.story__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
-.story__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.story__progress { position: absolute; left: var(--gutter); right: var(--gutter); top: calc(var(--nav-h) + 6px); height: 2px; background: var(--rule); }
-.story__progress span { display: block; height: 100%; background: var(--blue); transform-origin: left; transform: scaleX(0); }
-.story__captions { position: absolute; left: var(--gutter); bottom: clamp(20px, 7vh, 72px); width: min(430px, calc(100% - 2 * var(--gutter))); height: 230px; }
-.caption { position: absolute; inset: 0 0 auto 0; display: grid; gap: 10px; padding: 20px 22px; opacity: 0; background: color-mix(in srgb, var(--paper) 92%, transparent); border-top: 2px solid var(--blue); }
-.caption .mono { color: var(--blue); }
-.caption h3 { font-family: var(--f-display); font-weight: 700; font-size: var(--d3); line-height: .95; color: var(--navy); }
-.caption p { font-size: var(--t-small); line-height: 1.5; color: var(--steel); }
-
-/* ---------- CTA + footer wordmark ---------- */
-.cta { background: var(--abyss); color: #fff; padding-block: clamp(90px, 16vh, 180px) 0; overflow: hidden; }
-.cta__row { display: flex; justify-content: space-between; align-items: end; gap: 32px; flex-wrap: wrap; }
-.cta h2 { font-family: var(--f-display); font-weight: 700; font-size: var(--d1); line-height: .9; letter-spacing: -.02em; }
-.cta h2 em { font-style: normal; color: var(--glow); }
-.cta__side { display: grid; gap: 22px; max-width: 380px; justify-items: start; }
-.cta__side p { color: color-mix(in srgb, #fff 70%, transparent); }
-/* sections.js fits the viewBox to the letters' ink using this element's font-family and the svg's data-weight */
-.wordmark { display: block; width: 100%; height: auto; margin-block: clamp(56px, 10vh, 120px) clamp(22px, 3.5vh, 40px); overflow: hidden; font-family: var(--f-display); }
-.wordmark text { font-size: 1000px; font-weight: 700; fill: url(#wordmarkFill); }
-.legal { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-block: 18px; border-top: 1px solid var(--rule-dark); color: color-mix(in srgb, #fff 50%, transparent); }
-
-/* ---------- Responsive ---------- */
+/* ---------- Responsive (nav/hero page chrome; content-block responsive rules live in sections.css) ---------- */
 @media (max-width: 820px) {
+  /* на телефоне продукт стоит в центре кадра — текст остаётся внизу, чтобы не лечь на банку */
+  .hero__copy { top: auto; bottom: clamp(28px, 7vh, 76px); }
   :root { --nav-h: 64px; }
+  .brand__mark { height: 40px; }
   .nav__links, .hero__cue { display: none; }
-  .hero { height: 220vh; }
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .stat:nth-child(3) { padding-left: 0; border-left: 0; }
-  .stat:nth-child(n + 3) { margin-top: 28px; }
-  .story { height: 440vh; }
-  .story__captions { bottom: 16px; }
-}
-@media (max-width: 480px) {
-  .stats { grid-template-columns: 1fr; }
-  .stat, .stat + .stat { padding: 22px 0; margin: 0; border-left: 0; border-bottom: 1px solid var(--rule); }
+  .hero { height: 558vh; }
+  .hero__actions .btn { width: 100%; }
 }
 
 /* Reduced motion: no pinning or scrubbing, the page reads as a normal document */
 @media (prefers-reduced-motion: reduce) {
-  .hero, .story { height: auto; }
-  .hero__stage, .story__stage { position: relative; height: 100svh; }
-  .hero__atmos { display: none; }
-  .story__captions { height: auto; }
-  .caption { position: relative; opacity: 1; margin-bottom: 12px; }
-  .pre-strip, .preloader__bar span, .hero__cue i::after { animation: none; }
+  .hero { height: auto; }
+  .hero__stage { position: relative; height: 100svh; }
+  .hero__cue i::after { animation: none; }
 }

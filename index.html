@@ -13,8 +13,8 @@
 <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <!-- Fonts load without blocking first paint: a slow font CDN must never freeze the preloader -->
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&family=Inter:wght@400;500;600;700&display=swap"></noscript>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="sections.css">
 <script>document.documentElement.classList.remove("no-js");</script>
@@ -27,85 +27,414 @@
 </head>
 <body>
 
-<!-- Hidden defs: the spray-paint roughening used by the preloader graffiti (feTurbulence + displacement, no image) -->
+<!-- Hidden defs: the spray-paint roughening used by the preloader graffiti (feTurbulence + displacement, no image),
+     plus the reusable DOMA throw-up mark and lightning-bolt shapes drawn as thick round-stroked "tubes"
+     (each stroked twice — wide black, narrower paper-white on the same centreline — so every letter and the
+     bolt read as a hand-painted bubble outline without needing a custom font or a raster image). -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <filter id="spray-rough" x="-25%" y="-40%" width="150%" height="180%">
     <feTurbulence type="fractalNoise" baseFrequency="0.012 0.09" numOctaves="2" seed="7" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="10" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
+  <!-- DOMA itself is set in real Unbounded type (index.html body, .preloader__word) — hand-plotted bezier
+       letterforms kept coming out crooked/illegible, so the word is real type dressed as a spray stencil
+       (heavy outline, drips, splatter, underline tag) instead of faked calligraphy. -->
+  <!-- Halo ring — the floating tag accent that reads across every poster reference (BAB, wildstyle Porsche) -->
+  <symbol id="tagHalo" viewBox="0 0 1000 340">
+    <ellipse cx="520" cy="14" rx="34" ry="15" transform="rotate(-8 520 14)" fill="none" stroke="#0b0b0a" stroke-width="10"/>
+    <ellipse cx="520" cy="14" rx="34" ry="15" transform="rotate(-8 520 14)" fill="none" stroke="#f7f4ec" stroke-width="5"/>
+  </symbol>
+  <!-- Drips hanging under the word + a scatter of spray dots — the two texture cues every poster reference shares -->
+  <symbol id="tagDrips" viewBox="0 0 1000 340">
+    <g fill="none" stroke-linecap="round">
+      <path d="M175,300 L168,346 M175,300 L184,332" stroke="#0b0b0a" stroke-width="13"/>
+      <path d="M175,300 L168,340 M175,300 L184,326" stroke="#f7f4ec" stroke-width="7"/>
+      <path d="M470,300 L463,362 M470,300 L479,338" stroke="#0b0b0a" stroke-width="13"/>
+      <path d="M470,300 L463,356 M470,300 L479,332" stroke="#f15923" stroke-width="7"/>
+      <path d="M760,300 L756,332" stroke="#0b0b0a" stroke-width="11"/>
+      <path d="M760,300 L756,326" stroke="#f7f4ec" stroke-width="6"/>
+    </g>
+    <g fill="#0b0b0a">
+      <circle cx="60" cy="60" r="7"/><circle cx="84" cy="38" r="4"/><circle cx="925" cy="80" r="6"/><circle cx="900" cy="56" r="3.5"/>
+    </g>
+    <g fill="#f7f4ec">
+      <circle cx="60" cy="60" r="4"/><circle cx="84" cy="38" r="2.2"/><circle cx="925" cy="80" r="3.4"/><circle cx="900" cy="56" r="2"/>
+    </g>
+  </symbol>
+  <!-- The underline swoosh ties the four letters into one tag/logotype, like the whip-tail rule under NFS Most
+       Wanted — a tapered stroke (two widths on the same curve) with a short flicked-up arrow tail. Brand accent
+       orange, flat fill only, no glow — matte per brand.md. -->
+  <symbol id="tagSwoosh" viewBox="0 0 1000 340">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M50,296 C300,324 610,322 852,282 L912,224" stroke="#0b0b0a" stroke-width="20"/>
+      <path d="M50,296 C300,324 610,322 852,282 L912,224" stroke="#f15923" stroke-width="11"/>
+      <path d="M886,206 L916,234 M916,234 L878,230" stroke="#0b0b0a" stroke-width="14"/>
+      <path d="M886,206 L916,234 M916,234 L878,230" stroke="#f15923" stroke-width="7"/>
+    </g>
+  </symbol>
+  <!-- Lightning: a fractal bolt (midpoint-displacement, not hand-drawn zigzag), full screen-height, plus four
+       forks branching off it at different depths, each its own stroked path so main.js can draw them on in
+       sequence (dash-offset) instead of one flat fade-in. Same black-outline + flat-white technique as the
+       letters (a hard cut-sticker edge), no blur/glow — brand.md rules out neon, light here is a practical flash. -->
+  <symbol id="lightningBolt" viewBox="0 0 400 1000" preserveAspectRatio="xMidYMid slice">
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path class="bolt-main" d="M210,-40 L215,-9 L234,23 L238,58 L255,93 L259,125 L254,157 L272,195 L289,229 L294,265 L293,300 L294,333 L276,368 L283,407 L288,444 L280,480 L281,521 L272,552 L277,584 L276,617 L262,653 L238,683 L233,716 L234,753 L233,787 L227,817 L209,847 L199,877 L200,911 L210,943 L206,978 L199,1011 L190,1040" stroke="#0b0b0a" stroke-width="13"/>
+      <path class="bolt-main" d="M210,-40 L215,-9 L234,23 L238,58 L255,93 L259,125 L254,157 L272,195 L289,229 L294,265 L293,300 L294,333 L276,368 L283,407 L288,444 L280,480 L281,521 L272,552 L277,584 L276,617 L262,653 L238,683 L233,716 L234,753 L233,787 L227,817 L209,847 L199,877 L200,911 L210,943 L206,978 L199,1011 L190,1040" stroke="#fff" stroke-width="7"/>
+      <path class="bolt-fork" d="M259,125 L254,142 L276,160 L287,174 L328,183 L355,198 L363,207 L372,217 L379,220" stroke="#0b0b0a" stroke-width="8"/>
+      <path class="bolt-fork" d="M259,125 L254,142 L276,160 L287,174 L328,183 L355,198 L363,207 L372,217 L379,220" stroke="#fff" stroke-width="4.5"/>
+      <path class="bolt-fork" d="M276,368 L267,378 L277,394 L251,406 L228,422 L208,437 L204,459 L171,468 L136,483" stroke="#0b0b0a" stroke-width="8"/>
+      <path class="bolt-fork" d="M276,368 L267,378 L277,394 L251,406 L228,422 L208,437 L204,459 L171,468 L136,483" stroke="#fff" stroke-width="4.5"/>
+      <path class="bolt-fork" d="M277,584 L300,599 L298,614 L317,633 L346,646 L375,660 L393,675 L406,687 L407,694" stroke="#0b0b0a" stroke-width="8"/>
+      <path class="bolt-fork" d="M277,584 L300,599 L298,614 L317,633 L346,646 L375,660 L393,675 L406,687 L407,694" stroke="#fff" stroke-width="4.5"/>
+      <path class="bolt-fork" d="M233,787 L225,796 L201,805 L197,818 L190,826 L158,840 L136,853 L139,863 L123,877" stroke="#0b0b0a" stroke-width="8"/>
+      <path class="bolt-fork" d="M233,787 L225,796 L201,805 L197,818 L190,826 L158,840 L136,853 L139,863 L123,877" stroke="#fff" stroke-width="4.5"/>
+    </g>
+  </symbol>
+  <!-- Impact burst: eight short rays from the strike point, popped + faded right on the flash -->
+  <symbol id="impactBurst" viewBox="-60 -60 120 120">
+    <g fill="none" stroke="#0b0b0a" stroke-width="10" stroke-linecap="round">
+      <path d="M18,0 L48,0"/><path d="M12.7,12.7 L33.9,33.9"/><path d="M0,18 L0,48"/><path d="M-12.7,12.7 L-33.9,33.9"/>
+      <path d="M-18,0 L-48,0"/><path d="M-12.7,-12.7 L-33.9,-33.9"/><path d="M0,-18 L0,-48"/><path d="M12.7,-12.7 L33.9,-33.9"/>
+    </g>
+    <g fill="none" stroke="#fff" stroke-width="5.5" stroke-linecap="round">
+      <path d="M18,0 L48,0"/><path d="M12.7,12.7 L33.9,33.9"/><path d="M0,18 L0,48"/><path d="M-12.7,12.7 L-33.9,33.9"/>
+      <path d="M-18,0 L-48,0"/><path d="M-12.7,-12.7 L-33.9,-33.9"/><path d="M0,-18 L0,-48"/><path d="M12.7,-12.7 L33.9,-33.9"/>
+    </g>
+  </symbol>
 </svg>
 
-<!-- Preloader: a darkened brick wall with the DOMA tag sprayed on it. It tears open with the same jagged edge
-     as the hero (.tear-mask, --tear driven by main.js) instead of sliding away — one motif, first use of it. -->
-<div class="preloader tear-mask" id="preloader" aria-hidden="true">
-  <div class="preloader__wall" aria-hidden="true"></div>
-  <div class="preloader__file">
-    <p><b>Нужен локальный сервер.</b> Браузер не запускает скрипты и 3D-сцены с файла, открытого двойным кликом.
-      Запустите <code>start-demo.bat</code> (Windows) или <code>start-demo.command</code> (macOS) в этой папке.</p>
-  </div>
-  <script>if (location.protocol === "file:") document.getElementById("preloader").classList.add("is-file");</script>
-  <span class="preloader__tag">DOMA</span>
-  <div class="preloader__foot">
-    <span class="mono preloader__caption">DOMA by GUF · энергетики × чипсы</span>
-    <div class="preloader__bar"><span id="preBar"></span></div>
-  </div>
-</div>
+<!-- Preloader deferred to v2 (docs/scenario.md, decision 2026-09-24) — the SVG defs above (spray-rough filter,
+     tag/swoosh/halo/drips symbols, lightning bolt) stay in place since it reuses them when it returns; the
+     preloader markup itself is out for now, so the page opens straight on the hero. -->
+
+<!-- One WebGL context for the whole page (world.js) — chapters (hero-doma.js, …) scissor their scene into their
+     own [id] stage's rectangle on this single canvas. See architecture.md Variant B. -->
+<canvas class="world" id="world" aria-hidden="true"></canvas>
 
 <header class="nav">
-  <a class="brand" href="#top" aria-label="DOMA home">DOMA</a>
+  <a class="brand" href="#top" aria-label="DOMA home"><img class="brand__mark" src="assets/img/logo-doma.svg" alt="DOMA" width="163" height="92"></a>
   <nav aria-label="Primary">
     <ul class="nav__links">
+      <li><a href="#product">Продукция</a></li>
       <li><a href="#about">О нас</a></li>
-      <li><a href="#story">Продукция</a></li>
-      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#creators">Отзывы</a></li>
+      <li><a href="#retail">Где купить</a></li>
     </ul>
   </nav>
-  <a class="btn btn--ghost" href="#contact">Стать партнёром</a>
+  <a class="btn btn--ghost" href="#partner">Стать партнёром</a>
 </header>
 
 <main id="top">
 
-  <!-- 01 · Hero: real panel-wall photo + jagged "torn poster" layer (hero-doma.js) that peels open on scroll to
-       reveal the can + bag (client's own product photography, alpha-cut). #product/#partner point at blocks not
-       built yet this session — see STATUS.md. -->
+  <!-- 01 · Hero v2 (scenario.md "тёмная product-stage"): hero-doma.js is a world.js chapter — real 3D scene,
+       can + pack as camera-facing sprites (client's own product photography, alpha-cut) so they cannot end up
+       "cut off at an angle" the way the v1 Three.js hero did under real mouse-wheel scroll (STATUS.md 2026-09-24).
+       No tear-mask here (removed 2026-09-24 — the partially-open jagged edge read as an unwanted triangular
+       shape sitting in the frame, see STATUS.md); the stage is plain dark, objects fade/rise straight in. -->
   <section class="hero" id="hero" data-ground="dark">
     <div class="hero__stage" id="heroStage">
-      <div class="hero__wall" aria-hidden="true"></div>
-
-      <div class="hero__objects">
-        <div class="hero__objects-in">
-          <div class="hero__can"><img src="assets/img/hero-can.webp" alt="Банка DOMA Energy Drink «Ориджинал» №01" loading="eager"></div>
-          <div class="hero__bag"><img src="assets/img/hero-bag.webp" alt="Пачка чипсов DOMA «Краб» №01" loading="eager"></div>
-        </div>
-      </div>
-
-      <div class="hero__tear tear-mask" aria-hidden="true"></div>
-      <span class="hero__tag" aria-hidden="true">DOMA</span>
+      <div class="hero__scan" id="heroScan" aria-hidden="true"></div>
 
       <div class="hero__copy" id="heroCopy">
-        <p class="hero__eyebrow mono"><b>DOMA by GUF</b><span>Энергетики × Чипсы</span><span>Дроп №01–04</span></p>
         <h1>
           <span class="line"><span>Заряжай день.</span></span>
           <span class="line"><span>Лови вкус.</span></span>
-          <span class="line"><span>Живи на <em>полной</em>.</span></span>
+          <span class="line"><span>Живи на полной</span></span>
         </h1>
         <div class="hero__foot">
-          <p class="hero__lede">Энергетики, чипсы и скоро мохито — всё, что нужно для твоего ритма.</p>
+          <p class="hero__lede">Энергетики, чипсы, сухарики и освежающий мохито — всё, что нужно для твоего ритма. Для учёбы, работы, вечеринки, поездки или катки с друзьями</p>
           <div class="hero__actions">
             <a class="btn btn--solid" href="#product">Смотреть продукцию</a>
-            <a class="btn btn--ghost" href="#partner">Стать партнёром</a>
           </div>
         </div>
       </div>
       <span class="hero__cue mono" aria-hidden="true"><i></i>Scroll</span>
+
+      <!-- 02 · Преимущества — живёт в той же закреплённой сцене, что и hero (механика MANA: продукт переезжает с
+           первого экрана на второй и встаёт по центру, над ним по дуге «колеса» проезжают карточки). perks.js
+           двигает карточки, hero-doma.js — продукт. Вид карточек переключается ?cards=a|b|c (выбор пользователя). -->
+      <div class="perks" id="perks">
+        <h2 class="perks__title perks__eyebrow">Почему выбирают нас</h2>
+        <div class="perks__cards" id="perksCards">
+          <article class="perks__card">
+            <span class="perks__tag">Вкус</span>
+            <h3>Яркие вкусы, которые хочется пробовать снова и снова — от классики до смелых сочетаний</h3>
+            <p>Мы создаём вкусы, которые запоминаются с первого раза</p>
+            <span class="perks__n" aria-hidden="true">№01</span>
+          </article>
+          <article class="perks__card">
+            <span class="perks__tag">Цена</span>
+            <h3>Отличное сочетание качества и цены — берёшь без раздумий и возвращаешься снова</h3>
+            <p>Качество уровня «вау» по цене «легко могу позволить»</p>
+            <span class="perks__n" aria-hidden="true">№02</span>
+          </article>
+          <article class="perks__card">
+            <span class="perks__tag">Дизайн</span>
+            <h3>Современный дизайн, который выделяется на полке среди других и сразу бросается в глаза</h3>
+            <p>Красиво снаружи — вкусно внутри</p>
+            <span class="perks__n" aria-hidden="true">№03</span>
+          </article>
+          <article class="perks__card">
+            <span class="perks__tag">Ритм</span>
+            <h3>Продукты для активной жизни и хорошего настроения, которые заряжают на весь день</h3>
+            <p>Удобный перекус дома, на работе, в дороге или после тренировки</p>
+            <span class="perks__n" aria-hidden="true">№04</span>
+          </article>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Blocks 2–8 of docs/scenario.md (про бренд, продукция, преимущества, блогеры, где купить, форма, футер)
-       are not built yet. The starter's placeholder About/Story/FAQ/CTA sections were removed rather than left
-       showing unrelated English filler — see STATUS.md for the build order. -->
+  <!-- 02b · Фото + видео: слева фото «Ориджинал 2», справа ролик из Instagram (instagram.com/p/DapIDfloNhw),
+       скачан файлом, чтобы показывать только видео, без шапки и подписи Instagram. Каждая половина = 50% ширины. -->
+  <section class="duo" id="duo" data-ground="dark" aria-label="DOMA by GUF: фото и видео">
+    <figure class="duo__half">
+      <img src="assets/img/duo-original.webp" alt="Энергетик DOMA by GUF Original, две банки" loading="lazy" decoding="async">
+    </figure>
+    <figure class="duo__half">
+      <video src="assets/video/insta-DapIDfloNhw.mp4" autoplay muted loop playsinline preload="metadata" aria-label="Видео DOMA by GUF"></video>
+    </figure>
+  </section>
+
+  <!-- 03 · Продукция: табы категорий + лента вкусов по образцу MANA (en.manayerbamate.com): панели во всю высоту,
+       фон каждой — цвет её упаковки (product-data.js), стрелки сдвигают ленту на одну панель, на тач — свайп. -->
+  <section class="product" id="product" data-ground="dark">
+    <div class="wrap">
+      <header class="product__head">
+        <h2 class="product__title">Какой вкус твой?</h2>
+      </header>
+
+      <div class="product__switch" role="tablist" aria-label="Категория продукции">
+        <button class="product__cat is-active" role="tab" aria-selected="true" aria-controls="product-track" data-cat="energy">Энергетики</button>
+        <button class="product__cat" role="tab" aria-selected="false" aria-controls="product-track" data-cat="chips">Чипсы</button>
+      </div>
+    </div>
+
+    <div class="product__carousel">
+      <ul class="product__track" id="product-track" role="tabpanel" aria-label="Вкусы"></ul>
+      <button class="product__arrow product__arrow--prev" type="button" aria-label="Предыдущий вкус">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+      </button>
+      <button class="product__arrow product__arrow--next" type="button" aria-label="Следующий вкус">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- 05 · Блок Инсты: реальные посты instagram.com/doma__moscow (12 последних, обложки скачаны 2026-09-24).
+       Механика по референсу State of Space (behance.net/gallery/246781673): плитки стоят по большому овалу вокруг
+       заголовка, низ овала уходит за край экрана. На скролле плитки разворачиваются по дуге от верха вниз и едут
+       по орбите, заголовок проявляется из размытия (insta.js). Каждая плитка — ссылка на пост. -->
+  <section class="insta" id="insta" data-ground="dark">
+    <div class="insta__stage">
+      <ul class="insta__ring" aria-label="Последние посты DOMA в Instagram">
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/DdRwPReKLp6/" target="_blank" rel="noopener"><img src="assets/img/insta/01.webp" alt="GUF, прощальный тур 2026–27" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/DcaXypfKk1M/" target="_blank" rel="noopener"><img src="assets/img/insta/02.webp" alt="Mille Grazie Tour, города и даты" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/DUsswNGjF3_/" target="_blank" rel="noopener"><img src="assets/img/insta/03.webp" alt="GUF с банкой DOMA Energy Drink" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/p/Ddq2KzqCvRu/" target="_blank" rel="noopener"><img src="assets/img/insta/04.webp" alt="AI меняет музыкальную индустрию" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/DdlsEwFK2a9/" target="_blank" rel="noopener"><img src="assets/img/insta/05.webp" alt="Концерт DOMA, зал с фонариками" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/p/Ddi8AN-CuRg/" target="_blank" rel="noopener"><img src="assets/img/insta/06.webp" alt="Яндекс Музыка и BandLink: новое фото артиста" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/Dda72c_Kvgt/" target="_blank" rel="noopener"><img src="assets/img/insta/07.webp" alt="Артист DOMA на сцене" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/Dda2rFOKlnd/" target="_blank" rel="noopener"><img src="assets/img/insta/08.webp" alt="Интервью артиста DOMA" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/deemars/reel/DdanHthKU8v/" target="_blank" rel="noopener"><img src="assets/img/insta/09.webp" alt="Deemars в капюшоне и очках" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/reel/DdZyVfeR2zC/" target="_blank" rel="noopener"><img src="assets/img/insta/10.webp" alt="Hustle &amp; Flow — Deemars и Roma Zotti" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/p/DdZxsDliotY/" target="_blank" rel="noopener"><img src="assets/img/insta/11.webp" alt="Новые релизы DOMA, 18 сентября" loading="lazy" decoding="async"></a></li>
+        <li class="insta__tile"><a href="https://www.instagram.com/doma__moscow/p/DdHwMiaCsnz/" target="_blank" rel="noopener"><img src="assets/img/insta/12.webp" alt="Новые релизы DOMA, 11 сентября" loading="lazy" decoding="async"></a></li>
+      </ul>
+      <div class="insta__copy">
+        <h2 class="insta__title">Заряд энергии для вашей ленты</h2>
+        <a class="insta__handle" href="https://www.instagram.com/doma__moscow" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="17.6" cy="6.4" r="1.1" class="insta__dot"/></svg>
+          <span>@doma__moscow</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Про бренд: спокойный блок, копия дословно с живого сайта клиента (qa/ref-doma-product/f1.jpg) —
+       не придумана. Реальная линейка вкусов, ничего не рвётся и не крутится, читается сразу. -->
+  <section class="about" id="about" data-ground="light">
+    <div class="wrap about__grid">
+      <div class="about__copy">
+        <p class="mono about__eyebrow">О нас</p>
+        <h2 class="about__title">Мы делаем то, что сами едим и пьём</h2>
+        <p class="about__lede">DOMA создаёт продукты для тех, кто не привык сидеть на месте</p>
+        <p class="about__text">Когда хочется зарядиться перед тренировкой, пережить долгий день, собраться с друзьями или просто поймать хороший вайб — мы уже рядом.</p>
+        <p class="about__text">Яркие вкусы, современный дизайн и продукты, которые становятся частью твоего дня.</p>
+      </div>
+      <div class="about__media">
+        <img src="assets/img/lineup-energy.webp" alt="Линейка энергетиков DOMA by GUF: №01 Ориджинал, №02 Энергия, №03 Тропик, №04 Персик" loading="lazy">
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Преимущества: акцентный фон как на живом сайте, 4 реальные причины (их же слова), карточки со
+       рваным краем сверху/снизу — тот же зубчатый мотив, что в hero, в маленьком масштабе. -->
+  <section class="perks" id="perks" data-ground="dark">
+    <div class="wrap">
+      <h2 class="perks__title">Почему выбирают нас</h2>
+      <ul class="perks__grid">
+        <li class="perks__card">
+          <span class="mono perks__n">01</span>
+          <h3>Яркие вкусы, которые хочется пробовать снова</h3>
+          <p>Мы создаём вкусы, которые запоминаются с первого раза</p>
+        </li>
+        <li class="perks__card">
+          <span class="mono perks__n">02</span>
+          <h3>Отличное сочетание качества и цены</h3>
+          <p>Качество уровня «вау» по цене «легко могу позволить»</p>
+        </li>
+        <li class="perks__card">
+          <span class="mono perks__n">03</span>
+          <h3>Современный дизайн, который выделяется среди других</h3>
+          <p>Красиво снаружи — вкусно внутри</p>
+        </li>
+        <li class="perks__card">
+          <span class="mono perks__n">04</span>
+          <h3>Продукты для активной жизни и хорошего настроения</h3>
+          <p>Удобный перекус дома, на работе, в дороге или после тренировки</p>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 05 · Блогеры/лейбл: три реальных кадра — те же видео, что уже опубликованы на живом сайте клиента
+       (VK @domabyguf), не постановка и не наши стоки. Их проигрыватель обрезан из кадра, поверх — свой
+       play-button (наш крупнее и непрозрачный, полностью его перекрывает). Ссылка ведёт на настоящий канал:
+       новых embed-ссылок на конкретные ролики Собчак/TikTok/trapgladiator нет — см. STATUS.md. -->
+  <section class="creators" id="creators" data-ground="dark">
+    <div class="wrap">
+      <header class="product__head">
+        <p class="mono product__eyebrow">Блогеры и лейбл</p>
+        <h2 class="product__title">Это реально <em>кто-то</em> пьёт</h2>
+      </header>
+      <div class="creators__wall">
+        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+          <img src="assets/img/blog-01.webp" alt="GUF держит банку DOMA Energy Drink" loading="lazy">
+          <span class="creators__play" aria-hidden="true"></span>
+          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+        </a>
+        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+          <img src="assets/img/blog-02.webp" alt="Трек-лист DOMA / GUF" loading="lazy">
+          <span class="creators__play" aria-hidden="true"></span>
+          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+        </a>
+        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+          <img src="assets/img/blog-03.webp" alt="Кадр с концерта DOMA / GUF" loading="lazy">
+          <span class="creators__play" aria-hidden="true"></span>
+          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+        </a>
+        <a class="creators__screen creators__screen--more" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+          <span class="mono creators__more-n">VK</span>
+          <span class="creators__more-t">Ещё видео<br>@domabyguf</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Где купить: реальный ритейл-лист с живого сайта клиента (qa/ref-doma-product/f6.jpg). Логотипы —
+       файлы сетей, полученные от клиента (assets/img/retail/, см. credits.json). Тап — поиск сети + DOMA by GUF. -->
+  <section class="retail" id="retail" data-ground="light">
+    <div class="wrap">
+      <header class="product__head">
+        <p class="mono product__eyebrow">Где купить</p>
+        <h2 class="product__title">Выбирай удобный способ покупки</h2>
+      </header>
+      <ul class="retail__grid">
+        <li><img src="assets/img/retail/aromatny-mir.jpg" alt="Ароматный мир" loading="lazy"></li>
+        <li><img src="assets/img/retail/ashan.png" alt="Ашан" loading="lazy"></li>
+        <li><img src="assets/img/retail/samokat.png" alt="Самокат" loading="lazy"></li>
+        <li><img src="assets/img/retail/spar.png" alt="SPAR" loading="lazy"></li>
+        <li><img src="assets/img/retail/ozon.png" alt="OZON" loading="lazy"></li>
+        <li><img src="assets/img/retail/wb.png" alt="Wildberries" loading="lazy"></li>
+        <li><img src="assets/img/retail/familia.png" alt="Familia" loading="lazy"></li>
+        <li><img src="assets/img/retail/cyberpride.jpg" alt="КиберPride" loading="lazy"></li>
+        <li><img src="assets/img/retail/trafik.jpg" alt="Трафик" loading="lazy"></li>
+        <li><img src="assets/img/retail/sezon.png" alt="Сезон" loading="lazy"></li>
+        <li><img src="assets/img/retail/miratorg.png" alt="Мираторг" loading="lazy"></li>
+        <li><img src="assets/img/retail/globus.png" alt="Глобус" loading="lazy"></li>
+        <li><img src="assets/img/retail/centrum.jpg" alt="Центрум" loading="lazy"></li>
+        <li><img src="assets/img/retail/vil.png" alt="ВиЛ" loading="lazy"></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 06b · Где купить — вариант 2 (сравнительный концепт, по просьбе пользователя 2026-09-24; первый вариант
+       #retail выше не трогаем). Механика — колонки-масонри разной высоты сходятся низами на скролле секции,
+       подсмотрено у блока «Наши клиенты» на liqium.ru/services (retail-wall.js); раскладка, пропорции, карточки —
+       свои под бренд DOMA (белые плитки-логотипы), не фото-коллаж оригинала. Фон секции — красная шёлковая
+       фактура клиента (assets/img/retail/bg-silk.webp, по просьбе пользователя 2026-09-24, см. sections.css);
+       ранее пробовали ту же фактуру на каждой карточке — откатили, карточки остались белыми. До показа клиенту —
+       прогнать audit-reference-originality (см. STATUS.md). -->
+  <section class="retailWall" id="retailWall" data-ground="dark">
+    <div class="wrap">
+      <header class="retailWall__head">
+        <h2 class="retailWall__title">Где купить</h2>
+        <p class="retailWall__lede">Выбирай удобный способ покупки и наслаждайся любимыми вкусами</p>
+      </header>
+      <div class="retailWall__grid" data-retail-wall>
+        <div class="retailWall__col">
+          <div class="retailWall__tile" style="aspect-ratio:1/1.4"><img src="assets/img/retail/aromatny-mir.jpg" alt="Ароматный мир" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1.1"><img src="assets/img/retail/ashan.png" alt="Ашан" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1.32"><img src="assets/img/retail/samokat.png" alt="Самокат" loading="lazy"></div>
+        </div>
+        <div class="retailWall__col">
+          <div class="retailWall__tile" style="aspect-ratio:1/0.9"><img src="assets/img/retail/spar.png" alt="SPAR" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1.1"><img src="assets/img/retail/ozon.png" alt="OZON" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/0.87"><img src="assets/img/retail/wb.png" alt="Wildberries" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/0.97"><img src="assets/img/retail/familia.png" alt="Familia" loading="lazy"></div>
+        </div>
+        <div class="retailWall__col">
+          <div class="retailWall__tile" style="aspect-ratio:1/1.1"><img src="assets/img/retail/cyberpride.jpg" alt="КиберPride" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/0.88"><img src="assets/img/retail/trafik.jpg" alt="Трафик" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1"><img src="assets/img/retail/sezon.png" alt="Сезон" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/0.95"><img src="assets/img/retail/miratorg.png" alt="Мираторг" loading="lazy"></div>
+        </div>
+        <div class="retailWall__col">
+          <div class="retailWall__tile" style="aspect-ratio:1/1.26"><img src="assets/img/retail/globus.png" alt="Глобус" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1.5"><img src="assets/img/retail/centrum.jpg" alt="Центрум" loading="lazy"></div>
+          <div class="retailWall__tile" style="aspect-ratio:1/1.28"><img src="assets/img/retail/vil.png" alt="ВиЛ" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Форма сотрудничества: тот же состав полей и та же копия, что на живом сайте (f7.jpg) — без
+       визуального конструктора, по решению пользователя. Реального бэкенда у концепта нет: сабмит перехватывается
+       и показывает то же сообщение, что будет после интеграции — см. STATUS.md перед реальным запуском. -->
+  <section class="partner" id="partner" data-ground="dark">
+    <div class="wrap partner__grid">
+      <div class="partner__copy">
+        <p class="mono product__eyebrow">Коллаборация</p>
+        <h2 class="product__title">Мы открыты для сотрудничества. Давай делать крутые проекты вместе</h2>
+        <p class="partner__lede">Остались вопросы, хотите предложить сотрудничество или запросить прайс-лист? Оставь заявку и мы обязательно свяжемся с тобой!</p>
+        <dl class="partner__contacts">
+          <div><dt>Запрос КП</dt><dd><a href="mailto:event@doma.moscow">event@doma.moscow</a></dd></div>
+          <div><dt>Коллаборации в соцсетях</dt><dd><a href="tel:+79653149378">+7 965 314 93 78</a></dd></div>
+        </dl>
+      </div>
+      <form class="partner__form" id="partnerForm" novalidate>
+        <label class="sr-only" for="pfName">Имя</label>
+        <input id="pfName" name="name" type="text" placeholder="Имя" autocomplete="name" required>
+        <label class="sr-only" for="pfPhone">Телефон</label>
+        <input id="pfPhone" name="phone" type="tel" placeholder="+7 (000) 000-00-00" autocomplete="tel" required>
+        <label class="sr-only" for="pfEmail">Электронная почта</label>
+        <input id="pfEmail" name="email" type="email" placeholder="Электронная почта" autocomplete="email">
+        <label class="partner__check"><input type="checkbox" required><span>Я даю согласие на обработку персональных данных</span></label>
+        <button class="btn btn--solid" type="submit">Отправить</button>
+        <p class="partner__done mono" role="status" hidden>Заявка принята — свяжемся с вами в ближайшее время.</p>
+      </form>
+    </div>
+  </section>
 
 </main>
+
+<footer class="footer" data-ground="dark">
+  <div class="wrap footer__legal">
+    <span>© 2026 DOMA by GUF. Все права защищены.</span>
+    <span>Демо-концепт лендинга, не публичная страница</span>
+  </div>
+</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>

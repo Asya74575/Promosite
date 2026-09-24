@@ -1,0 +1,17 @@
+import { chromium } from "playwright-core";
+const S = "C:/Users/naste/AppData/Local/Temp/claude/c--Users-naste-OneDrive-Desktop-mama---/fffc193a-f4f7-4358-99ca-c4b5107749fa/scratchpad/ig";
+const b = await chromium.launch({ executablePath: "C:/Program Files/Google/Chrome/Application/chrome.exe" });
+const p = await b.newPage({ viewport: { width: 1280, height: 1600 }, locale: "ru-RU" });
+const json = [];
+p.on("response", async (r) => { const u = r.url(); if (/graphql|web_profile_info|api\/v1/.test(u)) { try { json.push({ u, t: await r.text() }); } catch {} } });
+await p.goto("https://www.instagram.com/doma__moscow/", { waitUntil: "domcontentloaded", timeout: 60000 });
+await p.waitForTimeout(8000);
+await p.screenshot({ path: S + "/probe.jpg", type: "jpeg", quality: 70 });
+const imgs = await p.$$eval("img", (a) => a.map((i) => ({ src: i.src, alt: i.alt, w: i.naturalWidth })));
+const links = await p.$$eval("a[href*='/p/'], a[href*='/reel/']", (a) => a.map((x) => x.href));
+console.log(JSON.stringify({ imgs: imgs.length, links: links.length }));
+console.log(links.slice(0, 40).join("\n"));
+console.log(imgs.filter(i=>i.w>100).slice(0,5).map(i=>i.src.slice(0,120)).join("\n"));
+import("node:fs").then(fs => fs.writeFileSync(S + "/probe.json", JSON.stringify({ imgs, links, json }, null, 1)));
+await p.waitForTimeout(500);
+await b.close();
