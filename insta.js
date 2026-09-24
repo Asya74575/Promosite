@@ -14,6 +14,7 @@ const TILT = 22;            // deg, oval cards lean: 0 at top and sides, max on 
 const FINAL = 3;            // screens of scroll from "top bottom" to "bottom bottom" (.insta is 300svh)
 const MORPH = [1.15, 2.35]; // screens: arc of big cards → small oval (the stage is pinned from 1)
 const TITLE_GAP = 24;       // px, headline bottom → top of the big cards in act 1
+const SPIN = 0.35;          // slots per second the formed ring turns by itself, scroll or no scroll
 
 const lerp = (a, b, t) => a + (b - a) * t;
 
@@ -30,6 +31,7 @@ export function initInsta({ ScrollTrigger }) {
   let tiles = [], H = 0, CX = 0;
   let S = 0, CY = 0, RX = 0, RY = 0, table = [];   // act 2: small oval
   let CYT = 0;                                     // headline centre (same in both acts)
+  let spin = 0;                                    // slots the ring has turned by itself (time, not scroll)
   let SA = 0, RA = 0, TOPA = 0, PITCHA = 0;        // act 1: big arc
 
   const measure = () => {
@@ -89,7 +91,7 @@ export function initInsta({ ScrollTrigger }) {
   const update = (v) => {
     const n = tiles.length;
     const m = smooth(MORPH[0], MORPH[1], v);
-    const drift = Math.max(0, v - MORPH[1]) * ORBIT * n;
+    const drift = Math.max(0, v - MORPH[1]) * ORBIT * n + spin;
     tiles.forEach((el, i) => {
       let j = (i < Math.ceil(n / 2) ? i : i - n) + drift;
       j = ((((j + n / 2) % n) + n) % n) - n / 2;     // keep the slot in [-n/2, n/2)
@@ -135,4 +137,19 @@ export function initInsta({ ScrollTrigger }) {
     onUpdate: (self) => { last = self.progress * FINAL; update(last); },
   });
   update(last);
+
+  // The formed ring keeps turning on its own while the block is on screen — also when it is scrolled on past
+  // (the scroll timeline ends at "bottom bottom", the spin does not). Weighted by the morph: the arc stays still.
+  let raf = 0, prev = 0;
+  const tick = (now) => {
+    const dt = Math.min(0.1, (now - (prev || now)) / 1000);
+    prev = now;
+    spin += dt * SPIN * smooth(MORPH[0], MORPH[1], last);
+    update(last);
+    raf = requestAnimationFrame(tick);
+  };
+  new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !raf) { prev = 0; raf = requestAnimationFrame(tick); }
+    else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = 0; }
+  }).observe(root);
 }
