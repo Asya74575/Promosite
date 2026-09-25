@@ -1,0 +1,22 @@
+// ≤480px (пользователь 2026-09-25): hero, колесо «Преимуществ», стык с «Фото + видео», форма. usage: node tools/qa/check-480.mjs <out> <w> <h>
+import { chromium } from "playwright-core";
+import { mkdirSync } from "node:fs";
+const CHROME = process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe";
+const [out = "tools/qa/shots/c480", w = "480", h = "800"] = process.argv.slice(2);
+mkdirSync(out, { recursive: true });
+const browser = await chromium.launch({ executablePath: CHROME, args: ["--use-angle=d3d11", "--ignore-gpu-blocklist", "--enable-gpu"] });
+const page = await browser.newPage({ viewport: { width: +w, height: +h } });
+await page.goto("http://localhost:5173/", { waitUntil: "load", timeout: 90000 });
+await page.waitForTimeout(3500);
+const top = (s) => page.evaluate((s) => document.querySelector(s).getBoundingClientRect().top + scrollY, s);
+const go = async (y) => { await page.evaluate((y) => scrollTo(0, y), Math.round(y)); await page.waitForTimeout(1600); };
+const shot = (n) => page.screenshot({ path: `${out}/${w}x${h}-${n}.jpg`, type: "jpeg", quality: 72 });
+await go(0); await shot("1-hero");
+await go(+h * 2.2); await shot("2-perks");
+const duo = await top("#duo");
+await go(duo - +h * 0.7); await shot("3-seam");
+const f = await top("#partnerForm");
+await go(f - 150); await shot("4-form");
+const fw = await page.evaluate(() => { const r = document.querySelector("#partnerForm").getBoundingClientRect(); return [Math.round(r.width), Math.round(r.left), Math.round(innerWidth - r.right)]; });
+console.log(w, h, "form w/left/right", fw.join("/"), "scrollW", await page.evaluate(() => document.documentElement.scrollWidth));
+await browser.close();

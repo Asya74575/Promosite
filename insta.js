@@ -33,6 +33,7 @@ export function initInsta({ ScrollTrigger }) {
   let CYT = 0;                                     // headline centre (same in both acts)
   let spin = 0;                                    // slots the ring has turned by itself (time, not scroll)
   let SA = 0, RA = 0, TOPA = 0, PITCHA = 0;        // act 1: big arc
+  let LIFT = 0;                                    // act 1: headline + arc raised by this much (see measure)
 
   const measure = () => {
     const W = stage.clientWidth;
@@ -42,9 +43,13 @@ export function initInsta({ ScrollTrigger }) {
     CX = W / 2;
 
     S = Math.round(narrow ? Math.min(76, W * 0.17) : Math.min(130, Math.max(56, Math.min(W * 0.085, H * 0.14))));
-    CY = H * 0.62;
-    RY = CY - (navH + 8 + S / 2);          // top tile hangs just under the nav bar
-    RX = narrow ? W / 2 - S * 0.3 : Math.min(W / 2 - S * 0.75, RY * 1.3);
+    const cy0 = H * 0.62, ry0 = cy0 - (navH + 8 + S / 2);   // headline, arc and oval width are placed from these
+    // The oval's bottom card stands whole inside the stage (user 2026-09-24: photos were cut at the bottom edge);
+    // the top card still hangs just under the nav bar.
+    const top = cy0 - ry0, bottom = H - 12 - S / 2;
+    CY = (top + bottom) / 2;
+    RY = (bottom - top) / 2;
+    RX = narrow ? W / 2 - S * 0.3 : Math.min(W / 2 - S * 0.75, ry0 * 1.3);
 
     SA = Math.round(narrow ? W * 0.42 : Math.min(W * 0.2, H * 0.34));
     PITCHA = SA * 1.12;
@@ -61,7 +66,14 @@ export function initInsta({ ScrollTrigger }) {
     const P = len[M];
     table = len.map((l) => l / P);
 
-    const n = Math.min(30, Math.max(posts.length, Math.round(P / (S * (narrow ? 1.5 : 1.3)))));
+    // card count comes from the oval as it was before the bottom fix (ry0), so the arc keeps the same cards
+    let P0 = 0;
+    for (let k = 1, qx = 0, qy = -ry0; k <= M; k++) {
+      const t = (k / M) * Math.PI * 2, x = RX * Math.sin(t), y = -ry0 * Math.cos(t);
+      P0 += Math.hypot(x - qx, y - qy);
+      qx = x; qy = y;
+    }
+    const n = Math.min(30, Math.max(posts.length, Math.round(P0 / (S * (narrow ? 1.5 : 1.3)))));
     while (ring.children.length > n) ring.lastElementChild.remove();
     while (ring.children.length < n) {
       const c = posts[ring.children.length % posts.length].cloneNode(true);
@@ -75,9 +87,15 @@ export function initInsta({ ScrollTrigger }) {
 
     // The headline stands still in the middle of the oval; the big arc is placed so its middle card starts
     // TITLE_GAP under the headline (centre of that card = TOPA). The lower part of the arc is cut off by the screen.
-    CYT = CY - RY * 0.1;
+    CYT = cy0 - ry0 * 0.1;
     copy.style.setProperty("--cy", `${CYT.toFixed(1)}px`);
     TOPA = Math.min(H - SA * 0.45, CYT - copy.offsetHeight / 2 + title.offsetHeight + TITLE_GAP + SA / 2);
+    // Act 1: the headline would stand half a screen under the previous block. Raise it (and the arc under it) so
+    // the gap above it matches the other blocks' top padding (clamp(90px, 14vh, 160px), user 2026-09-24); the
+    // morph brings it back down to the middle of the oval.
+    // ≤499px (the 480 adaptive, user 2026-09-25): 60px, like every block gap there
+    const pad = matchMedia("(max-width: 499px)").matches ? 60 : Math.min(160, Math.max(90, window.innerHeight * 0.14));
+    LIFT = Math.max(0, CYT - copy.offsetHeight / 2 - pad);
   };
 
   // arc fraction u (0…1) → parameter t, by binary search in the table
@@ -102,7 +120,7 @@ export function initInsta({ ScrollTrigger }) {
       el.style.visibility = "visible";
 
       const ang = (j * PITCHA) / RA;                   // act 1: on the big circle
-      const xA = CX + RA * Math.sin(ang), yA = TOPA + RA * (1 - Math.cos(ang)) + (1 - k) * SA * 0.4;
+      const xA = CX + RA * Math.sin(ang), yA = TOPA - LIFT + RA * (1 - Math.cos(ang)) + (1 - k) * SA * 0.4;
       const t = paramAt(((j / n) % 1 + 1) % 1);        // act 2: on the oval
       const xB = CX + RX * Math.sin(t), yB = CY - RY * Math.cos(t);
 
@@ -116,7 +134,7 @@ export function initInsta({ ScrollTrigger }) {
     // headline: fades in with the block, then goes soft while the cards sweep over it (as in the reference)
     const tIn = smooth(0.3, 0.8, v), soft = Math.sin(Math.PI * m);
     title.style.opacity = (tIn * (1 - 0.45 * soft)).toFixed(3);
-    title.style.transform = `translateY(${((1 - tIn) * 16).toFixed(1)}px)`;
+    title.style.transform = `translateY(${((1 - tIn) * 16 - LIFT * (1 - m)).toFixed(1)}px)`;
     title.style.filter = soft < 0.01 ? "none" : `blur(${(soft * 10).toFixed(2)}px)`;
     const h = smooth(MORPH[1] - 0.35, MORPH[1] + 0.1, v);
     handle.style.opacity = h.toFixed(3);

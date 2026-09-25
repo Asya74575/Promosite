@@ -1,0 +1,26 @@
+// Межблочные отступы от контента до контента (адаптив 480). usage: node tools/qa/joints-gap.mjs [w=481] [h=800]
+import { chromium } from "playwright-core";
+const CHROME = process.env.CHROME_PATH || "C:/Program Files/Google/Chrome/Application/chrome.exe";
+const [w = "481", h = "800"] = process.argv.slice(2);
+const browser = await chromium.launch({ executablePath: CHROME, args: ["--use-angle=d3d11", "--ignore-gpu-blocklist", "--enable-gpu"] });
+const page = await browser.newPage({ viewport: { width: +w, height: +h } });
+await page.goto("http://localhost:5173/", { waitUntil: "load", timeout: 90000 });
+await page.waitForTimeout(3000);
+const R = (s) => page.evaluate((s) => { const r = document.querySelector(s).getBoundingClientRect(); return { t: r.top, b: r.bottom }; }, s);
+const go = async (y) => { await page.evaluate((y) => scrollTo(0, y), Math.round(y)); await page.waitForTimeout(1500); };
+const abs = (s) => page.evaluate((s) => document.querySelector(s).getBoundingClientRect().top + scrollY, s);
+const out = {};
+await go(await abs("#product") - 300);
+out["duo → Какой вкус"] = (await R(".product__title")).t - (await R("#duo")).b;
+await go(await abs("#insta") - 300);
+out["Продукция → Заряд"] = (await R(".insta__title")).t - (await R(".product__track")).b;
+await go(await abs("#creators") - 400);
+out["Инста (овал) → Нас выбирают"] = (await R("#creators .product__title")).t - await page.evaluate(() => Math.max(...[...document.querySelectorAll(".insta__tile")].map((e) => e.getBoundingClientRect().bottom)));
+await go(await abs("#retailWall") - 300);
+out["Нас выбирают → Где купить"] = (await R(".retailWall__title, #retailWall h2")).t - (await R(".creators__wall")).b;
+await go(await abs("#partner") - 300);
+out["Где купить → Коллаборация"] = (await R("#partner h2")).t - (await R(".retailWall__grid")).b;
+await go(1e6);
+out["Контакты → футер"] = (await R(".footer")).t - (await R(".partner__contacts")).b;
+for (const [k, v] of Object.entries(out)) console.log(w, h, k.padEnd(30), Math.round(v));
+await browser.close();

@@ -47,6 +47,13 @@
   .product__panel:hover .product__img { transform: translateY(-2%) scale(1.04); }
 }
 
+/* Last card: a whole line-up photo, same size as the flavour cards. The photo fills the card; the CTA sits on it
+   along the bottom, 20px in from the sides and the bottom. */
+.product__panel--promo { padding: 0; display: block; background: var(--promo-bg, #121212); }
+.product__promo-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.product__panel--promo[data-fit="contain"] .product__promo-img { object-fit: contain; }
+.product__cta { position: absolute; left: 20px; right: 20px; bottom: 20px; z-index: 1; justify-content: center; }
+
 .product__arrow {
   position: absolute; top: 50%; z-index: 2; display: grid; place-items: center;
   width: clamp(56px, 5vw, 86px); aspect-ratio: 1; border: 0; border-radius: 50%;
@@ -60,12 +67,38 @@
 .product__arrow--next { right: var(--gutter); }
 
 @media (max-width: 1100px) { .product__carousel { --panel: 50%; } }
+/* Планшет (пользователь 2026-09-24): при невысоком окне ряд с банкой растягивался под картинку и банка уходила
+   под низ карточки. minmax(0, 1fr) держит ряд в пределах карточки, 72% считаются от него. */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .product__panel { grid-template-rows: auto minmax(0, 1fr); }
+}
 @media (max-width: 640px) {
   .product__carousel { --panel: 84%; }
   .product__panel { height: clamp(480px, 82svh, 680px); }
 }
+/* ≤499px (адаптив 480, пользователь 2026-09-25; 499 — запас: в DevTools «480» на экране 2x даёт 481): на невысоком окне банки уходили под низ карточки — ряд держится в карточке,
+   как на планшете */
+@media (max-width: 499px) {
+  .product__panel { grid-template-rows: auto minmax(0, 1fr); }
+}
 @media (prefers-reduced-motion: reduce) {
   .product__track, .product__img, .product__arrow { transition: none; }
+}
+/* 700–820px (было 646–820; пользователь 2026-09-24): заголовок и табы по центру */
+@media (min-width: 700px) and (max-width: 820px) {
+  .product .product__head { margin-inline: auto; justify-items: center; text-align: center; }
+  .product__switch { justify-content: center; }
+}
+/* ≤699px (пользователь 2026-09-25, сначала 480–645, затем ≤645): заголовок и табы по центру */
+@media (max-width: 699px) {
+  .product .product__head { margin-inline: auto; justify-items: center; text-align: center; }
+  .product__switch { justify-content: center; }
+}
+/* ≤820px (пользователь 2026-09-25, сначала только 480–645): стрелки в 10px от края карточки
+   (карточки начинаются на 20px — отступ .product__carousel) */
+@media (max-width: 820px) {
+  .product .product__arrow--prev { left: 30px; }
+  .product .product__arrow--next { right: 30px; }
 }
 
 /* Shared block-header used by blocks 3, 5, 6, 7 (kept as one namespace instead of four near-identical headers) */
@@ -77,16 +110,6 @@
 [data-ground="light"] .product__eyebrow { color: var(--steel); }
 [data-ground="light"] .product__title { color: var(--navy); }
 [data-ground="light"] .product__title em { color: var(--blue); }
-
-/* ---------- Block 2 · Про бренд ---------- */
-.about { background: var(--paper); color: var(--ink); padding-block: clamp(90px, 14vh, 160px); border-top: 1px solid var(--rule); }
-.about__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 460px); gap: clamp(32px, 5vw, 80px); align-items: center; }
-.about__eyebrow { color: var(--steel); }
-.about__title { margin-top: 14px; color: var(--navy); }
-.about__lede { margin-top: 20px; max-width: 46ch; color: var(--navy); }
-.about__text { margin-top: 14px; max-width: 52ch; color: var(--steel); }
-.about__media img { width: 100%; height: auto; }
-@media (max-width: 900px) { .about__grid { grid-template-columns: minmax(0, 1fr); } .about__media { order: -1; max-width: 320px; margin-inline: auto; } }
 
 /* ---------- Block 2 · Преимущества v3 ---------- */
 /* Лежит внутри закреплённой сцены hero (#heroStage): продукт уже стоит по центру второго экрана (hero-doma.js),
@@ -139,6 +162,21 @@
   .perks__cards { top: 40%; }
   .perks__card { width: min(300px, 76vw); aspect-ratio: 4 / 4.6; }
 }
+/* Планшет (пользователь 2026-09-24): текст в фиксированную пропорцию не влезал и выталкивал №01–04 за край карточки.
+   Высота по содержимому — номер снова стоит внизу и уходит под край на те же 32px, что на десктопе. */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .perks__card { width: 300px; aspect-ratio: auto; min-height: 345px; }  /* 345 = 300 × 4.6/4, все четыре одной высоты */
+}
+/* ≤900px (пользователь 2026-09-24; сначала 646–900, затем и все меньшие адаптивы): номер №01–04 по центру карточки.
+   1024 утверждён — там номер смещён от центра на ~4px, не трогали */
+@media (max-width: 900px) {
+  .perks__n { align-self: center; }
+  /* номер целиком в карточке, 20px от нижнего края (пользователь 2026-09-25) — вместо опускания на 32px под край */
+  .perks__card { padding-bottom: 17px; }  /* 17 + рамка 1px + 2px запаса шрифта под цифрами = 20px от низа цифр (замер) */
+  .perks__n { translate: 0 0; }
+}
+/* Тёмная полоса сразу после hero (perks.js, ≤900px): высота = на сколько низ карточек выходит за сцену, иначе 0 */
+.perks__spill { background: #050505; }  /* цвет низа фона сцены (hero-bg.webp, замер пикселя), чтобы стык не читался */
 @media (prefers-reduced-motion: reduce) {
   /* perks.js выносит блок из сцены hero в обычную секцию сразу под ней */
   .perks { position: relative; inset: auto; padding: clamp(60px, 10vh, 100px) var(--gutter); background: var(--abyss); pointer-events: auto; }
@@ -150,8 +188,10 @@
 
 /* ---------- Block 5 · Блогеры / лейбл ---------- */
 /* A wall of real screens (client's own VK posts, cropped from their live page — not stock, not staged).
-   Their own play-button/caption chrome was cropped out; ours sits on top, opaque, same size or larger. */
+   Their own VK play icon (baked into the screenshots, off-centre) was removed from the files (originals in
+   research/blog-orig/); our play button sits in the card centre. */
 .creators { background: var(--abyss); color: #fff; padding-block: clamp(90px, 14vh, 160px); }
+.creators .product__head { max-width: none; }  /* заголовок «Нас выбирают…» в две строки (пользователь 2026-09-24) */
 .creators__wall { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; background: var(--rule-dark); }
 .creators__screen { position: relative; display: block; aspect-ratio: 3 / 4; overflow: hidden; text-decoration: none; color: #fff; background: var(--navy); }
 .creators__screen img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(.15) brightness(.85); transition: transform .5s ease, filter .3s ease; }
@@ -166,17 +206,33 @@
 .creators__screen--more { display: grid; place-items: center; gap: 10px; text-align: center; background: var(--navy); }
 .creators__more-n { color: var(--accent); }
 @media (max-width: 900px) { .creators__wall { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .creators__wall { grid-template-columns: minmax(0, 1fr); } .creators__screen { aspect-ratio: 16 / 10; } }
-
-/* ---------- Block 6 · Где купить ---------- */
-/* Real retailer logo files from the client (assets/img/retail/, credits.json). Cards stay a fixed white tile so
-   mixed-aspect logo files (square marks vs. wide wordmarks) sit on one calm grid instead of jumping in size. */
-.retail { background: var(--mist); padding-block: clamp(90px, 14vh, 160px); border-top: 1px solid var(--rule); }
-.retail__grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 2px; list-style: none; margin: 0; padding: 0; background: var(--rule); }
-.retail__grid li { display: grid; place-items: center; min-height: 96px; padding: 18px; background: #fff; }
-.retail__grid img { max-width: 100%; max-height: 56px; width: auto; height: auto; object-fit: contain; }
-@media (max-width: 900px) { .retail__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-@media (max-width: 480px) { .retail__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* ≤900px (пользователь 2026-09-24; сначала 480–900, затем и все меньшие адаптивы): стена → лента-слайдер по образцу
+   «Продукции»: до 645 карточка на 84% ширины, край следующей виден; на 646–900 две карточки в ряд, как панели
+   «Продукции» на этой ширине. Свайп + круглые стрелки на одну карточку (creators.js). Шире 900 стрелок нет. */
+.creators__slider { position: relative; }
+.creators__arrow { display: none; }
+@media (max-width: 900px) {
+  .creators__wall {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none;
+  }
+  .creators__wall::-webkit-scrollbar { display: none; }
+  .creators__screen { flex: 0 0 84%; aspect-ratio: 3 / 4; scroll-snap-align: start; }
+  .creators__arrow { display: grid; }
+  .creators__arrow.product__arrow--prev { left: 12px; }
+  .creators__arrow.product__arrow--next { right: 12px; }
+}
+@media (min-width: 700px) and (max-width: 900px) {
+  .creators__screen { flex-basis: calc(50% - 1px); }  /* 1px = половина зазора 2px: две карточки ровно во всю ширину */
+}
+/* ≤699px (пользователь 2026-09-25, сначала 480–645, затем ≤645): заголовок по центру, две карточки в ряд, как на 646–900 */
+@media (max-width: 699px) {
+  .creators .product__head { justify-items: center; text-align: center; }
+  .creators__screen { flex-basis: calc(50% - 1px); }
+}
+/* ≤499px (адаптив 480, пользователь 2026-09-25; 499 — запас: в DevTools «480» на экране 2x даёт 481): карточки видео вытянутые, 9:16 как половины «Фото + видео» (было 3:4) */
+@media (max-width: 499px) {
+  .creators__screen { aspect-ratio: 9 / 16; }
+}
 
 /* ---------- Block 6b · Где купить — вариант 2 (масонри-стена, retail-wall.js) ---------- */
 /* Механика — прямое повторение liqium.ru/services («Наши клиенты», по просьбе пользователя 2026-09-24): колонки
@@ -191,8 +247,12 @@
   background: linear-gradient(180deg, rgba(10, 2, 2, .6), rgba(10, 2, 2, .35) 35%, rgba(10, 2, 2, .6)),
               url("assets/img/retail/bg-silk.webp") center/cover no-repeat, #6b0f0a;
 }
-.retailWall__head { max-width: 640px; margin-inline: auto; margin-bottom: clamp(64px, 9vw, 180px); text-align: center; }
+/* Отступ шапка→сетка — как у .product__head (по просьбе пользователя 2026-09-24); подзаголовок в одну строку на
+   десктопе, на ≤900px переносится. Колонки к концу подъёма выходят выше верха сетки на ~50–60px и заходят в этот
+   отступ — это происходит, когда шапка уже ушла за верх экрана (проверено tools/qa/verify-wall.mjs). */
+.retailWall__head { margin-inline: auto; margin-bottom: clamp(36px, 5vh, 56px); text-align: center; }
 .retailWall__lede { margin-top: 16px; color: color-mix(in srgb, #fff 75%, transparent); }
+@media (min-width: 901px) { .retailWall__lede { white-space: nowrap; } }
 .retailWall__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; align-items: start; }
 .retailWall__col { display: flex; flex-direction: column; gap: 10px; will-change: transform; }
 .retailWall__col:nth-child(2) { margin-top: 6vw; }
@@ -200,25 +260,41 @@
 .retailWall__col:nth-child(4) { margin-top: 6vw; }
 .retailWall__tile { position: relative; display: grid; place-items: center; padding: clamp(16px, 3vw, 28px); background: #fff; }
 .retailWall__tile img { width: 100%; height: 100%; object-fit: contain; }
+/* ≤900px (пользователь 2026-09-24): без лесенки и без анимации — все карточки одной ширины и высоты, обычная сетка
+   в 4 колонки (пользователь 2026-09-25, было 2). Колонки растворяются (display: contents), карточки встают в сетку
+   напрямую; !important перебивает индивидуальные aspect-ratio карточек из index.html. Сетка на flex-wrap, чтобы
+   неполный последний ряд стоял по центру (пользователь 2026-09-25); 30px = три зазора по 10px в ряду. */
 @media (max-width: 900px) {
-  .retailWall__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .retailWall__col:nth-child(3) { margin-top: 0; }
-  .retailWall__col:nth-child(4) { margin-top: 0; }
-  .retailWall__col:nth-child(2) { margin-top: 6vw; }
+  .retailWall__grid { display: flex; flex-wrap: wrap; justify-content: center; }
+  .retailWall__col { display: contents; }
+  .retailWall__tile { flex: 0 0 calc((100% - 30px) / 4); aspect-ratio: 1 / 1 !important; }
 }
 @media (prefers-reduced-motion: reduce) { .retailWall__col { transform: none !important; } }
 
 /* ---------- Block 7 · Форма сотрудничества ---------- */
-.partner { background: var(--abyss); color: #fff; padding-block: clamp(90px, 14vh, 160px); }
-.partner__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 440px); gap: clamp(32px, 5vw, 80px); align-items: start; }
-.partner__lede { margin-top: 20px; max-width: 48ch; color: color-mix(in srgb, #fff 78%, transparent); }
-.partner__contacts { display: grid; gap: 16px; margin-top: clamp(28px, 4vh, 44px); padding-top: 22px; border-top: 1px solid var(--rule-dark); }
-.partner__contacts dt { color: color-mix(in srgb, #fff 55%, transparent); }
-.partner__contacts dd { margin: 4px 0 0; }
-.partner__contacts a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+/* Раскладка по референсу пользователя (2026-09-24): шапка в строку (H2 слева, лид справа), по центру узкая колонка
+   «текст → форма → контакты», по краям две наклонённые банки, обрезанные краями секции. Фон тёмный, как у всего сайта. */
+.partner { --err: #ff6b5e; position: relative; overflow: clip; background: var(--abyss); color: #fff; padding-block: clamp(90px, 14vh, 160px); }
+.partner .wrap { position: relative; z-index: 1; }
+.partner__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; margin-bottom: clamp(36px, 5vh, 56px); }
+.partner__lede { max-width: 30ch; }
+.partner__body { width: min(100%, 440px); margin-inline: auto; }
+.partner__text { margin-bottom: 28px; color: color-mix(in srgb, #fff 78%, transparent); }
+.partner__cans { display: contents; }
+/* --py/--pr — параллакс при скролле (partner-cans.js), базовый наклон задан здесь */
+.partner__can { position: absolute; z-index: 0; height: auto; pointer-events: none; user-select: none; will-change: transform; }
+.partner__can--guf { width: clamp(200px, 22vw, 380px); left: -5vw; top: 26%; transform: translateY(var(--py, 0px)) rotate(calc(20deg + var(--pr, 0deg))); }
+.partner__can--front { width: clamp(200px, 23vw, 400px); right: -4vw; top: 22%; transform: translateY(var(--py, 0px)) rotate(calc(-18deg + var(--pr, 0deg))); }
+.partner__contacts { display: grid; gap: 12px; margin-top: 36px; }
+.partner__contacts div { display: flex; flex-wrap: wrap; column-gap: .35em; }
+.partner__contacts dt { color: color-mix(in srgb, #fff 78%, transparent); }
+.partner__contacts dd { margin: 0; }
+.partner__contacts a { color: #fff; text-decoration: none; }
+.partner__contacts a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .partner__form { display: grid; gap: 14px; }
+@media (max-width: 499px) { .partner__form { width: min(100%, 360px); margin-inline: auto; } }  /* форма 360px по центру (пользователь 2026-09-25) */
 .partner__form input:not([type="checkbox"]) {
-  height: 54px; padding-inline: 18px; border: 1px solid var(--rule-dark); background: color-mix(in srgb, #fff 6%, transparent);
+  height: 54px; padding-inline: 24px; border: 1px solid var(--rule-dark); border-radius: 999px; background: color-mix(in srgb, #fff 6%, transparent);
   color: #fff; font: 400 var(--t-body)/1.2 var(--f-body); transition: border-color .2s;
 }
 .partner__form input:not([type="checkbox"])::placeholder { color: color-mix(in srgb, #fff 45%, transparent); }
@@ -226,18 +302,68 @@
 .partner__check { display: flex; align-items: flex-start; gap: 10px; color: color-mix(in srgb, #fff 78%, transparent); cursor: pointer; }
 .partner__check input { flex: none; width: 16px; height: 16px; margin: 2px 0 0; }
 .partner__check span { min-width: 0; }
-.partner__form .btn { justify-self: start; margin-top: 6px; }
+.partner__check a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+/* флажок России в поле телефона (как на референсе) */
+.partner__field { position: relative; }
+.partner__flag {
+  position: absolute; left: 22px; top: 27px; width: 22px; height: 15px; margin-top: -7.5px; border-radius: 3px; overflow: hidden;
+  background: linear-gradient(#fff 0 33.4%, #0039a6 33.4% 66.7%, #d52b1e 66.7%); box-shadow: 0 0 0 1px color-mix(in srgb, #fff 20%, transparent);
+}
+.partner__form .partner__flag + input { padding-left: 56px; }
+/* высота как у кнопки hero (60px), ширина — на всю ширину полей (по просьбе пользователя 2026-09-24) */
+.partner__form .btn { width: 100%; height: 60px; justify-content: center; margin-top: 6px; }
+.partner__field { display: grid; }
+.partner__field input:not([type="checkbox"]) { width: 100%; }
+.partner__form input[aria-invalid="true"]:not([type="checkbox"]) { border-color: var(--err); }
+.partner__check input[aria-invalid="true"] { outline: 1px solid var(--err); outline-offset: 2px; }
+.partner__error { margin: 6px 0 0; padding-left: 24px; color: var(--err); }  /* по тексту внутри поля-«пилюли» */
+.partner__check + .partner__error { padding-left: 26px; }
 .partner__done { color: color-mix(in srgb, #8dc63f 90%, #fff 10%); }
-@media (max-width: 900px) { .partner__grid { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 820px) {
+  .partner__head { flex-direction: column; gap: 14px; }
+  /* ≤820px (пользователь 2026-09-24): без банок, заголовок, лид и контакты по центру */
+  .partner__cans { display: none; }
+  .partner__head { align-items: center; text-align: center; }
+  .partner__contacts { justify-items: center; text-align: center; }
+  .partner__contacts div { justify-content: center; }
+  .partner__text { text-align: center; }  /* текст над формой по центру (пользователь 2026-09-25) */
+  .partner__lede { max-width: 42ch; text-wrap: balance; }  /* лид в две строки (пользователь 2026-09-25) */
+}
+/* 700–900px (было 646–900; пользователь 2026-09-24): отступ под контактами до футера меньше — как отступ шапка → контент */
+@media (min-width: 700px) and (max-width: 900px) {
+  .partner { padding-bottom: clamp(36px, 5vh, 56px); }
+  /* банки по краям отодвинуты на 20px наружу, не наезжают на форму (пользователь 2026-09-25) */
+  .partner__can--front { right: calc(-4vw - 20px); }
+  .partner__can--guf { left: calc(-5vw - 20px); }
+  /* контакты под формой по центру (пользователь 2026-09-25) */
+  .partner__contacts { justify-items: center; text-align: center; }
+  .partner__contacts div { justify-content: center; }
+}
 
 /* ---------- Block 8 · Футер ---------- */
-.footer { background: var(--navy-deep); color: color-mix(in srgb, #fff 72%, transparent); padding-block: clamp(56px, 8vh, 80px) 0; }
+.footer { background: var(--navy-deep); color: color-mix(in srgb, #fff 72%, transparent); }  /* без пустого отступа сверху (пользователь 2026-09-24) */
 .footer__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px clamp(24px, 4vw, 56px); }
 .footer__grid p { margin: 0 0 10px; line-height: 1.5; }
 .footer__brand { color: #fff; }
 .footer__grid a { color: #fff; }
-.footer__legal { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; margin-top: clamp(32px, 5vh, 48px); padding-block: 18px; border-top: 1px solid var(--rule-dark); }
+.footer__legal { display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding-block: 18px; }  /* без линии сверху (пользователь 2026-09-24) */
 @media (max-width: 700px) { .footer__grid { grid-template-columns: minmax(0, 1fr); } }
+/* 480–820px (пользователь 2026-09-24, до 820 — 2026-09-25): две строки копирайта — в два столбца, как по краям на десктопе */
+@media (min-width: 480px) and (max-width: 820px) {
+  .footer__legal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer__legal span:last-child { text-align: right; }
+}
+/* 700–820px (было 646–820; пользователь 2026-09-25): одна колонка, обе строки по центру */
+@media (min-width: 700px) and (max-width: 820px) {
+  .footer__legal { grid-template-columns: minmax(0, 1fr); }
+  .footer__legal span, .footer__legal span:last-child { text-align: center; }
+}
+/* ≤699px (пользователь 2026-09-25, сначала 480–645, затем ≤645): отступ под контактами как на 646–900, копирайт одной колонкой по центру */
+@media (max-width: 699px) {
+  .partner { padding-bottom: clamp(36px, 5vh, 56px); }
+  .footer__legal { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: center; text-align: center; }
+  .footer__legal span:last-child { text-align: center; }
+}
 
 /* ---------- Block 2b · Фото + видео ---------- */
 /* Две половины экрана встык: слева фото, справа ролик из Instagram (файлом, без интерфейса Instagram). */
@@ -246,6 +372,9 @@
 .duo__half img, .duo__half video { display: block; width: 100%; height: 100%; object-fit: cover; }
 .duo__half video { height: calc(100% + 100px); margin-top: -100px; object-position: 50% 0; }  /* видео поднято на 100px: верхние 100px ролика уходят за край блока, низ всегда заполнен */
 @media (max-width: 820px) {
+  /* тёмная кромка 2px над блоком: на стыке с hero дробный пиксель не отрисованного WebGL-холста показывал светлый
+     фон страницы белой полосой (пользователь 2026-09-24) */
+  .duo { position: relative; box-shadow: 0 -2px 0 var(--abyss); }
   .duo { height: auto; }
   .duo__half { aspect-ratio: 9 / 16; }
 }
@@ -275,3 +404,16 @@
 .insta__handle:hover { color: var(--accent); }
 /* Без анимации: сцена не закрепляется, плитки сразу стоят по овалу (insta.js ставит финальный кадр) */
 @media (prefers-reduced-motion: reduce) { .insta { height: 100svh; } }
+
+/* ≤499px (адаптив 480, пользователь 2026-09-25; 499 — запас: в DevTools «480» на экране 2x даёт 481): межблочные отступы 60px от контента до контента
+   (полноэкранные «Фото + видео» и «Инста» без полей, как были) */
+@media (max-width: 499px) {
+  .product { padding-top: 60px; }
+  /* от контента до контента 60px на каждом стыке: у «Инсты» низ овала в 12px от края блока (insta.js) — 12 + 48;
+     на границах фона «Где купить» по 30 с каждой стороны; от контактов до футера 60 */
+  .creators { padding-block: 48px 30px; }
+  .retailWall { padding-block: 30px; }  /* граница красного фона посередине стыка: 30 + 30 = 60 (пользователь 2026-09-25) */
+  .partner { padding-block: 30px 60px; }
+  .partner__contacts { margin-bottom: 0; }  /* браузерные 16px у <dl> добавлялись к 60 */
+  .footer__legal { padding-block: 32px; }  /* копирайт: 32px сверху и снизу (пользователь 2026-09-25, было 18) */
+}

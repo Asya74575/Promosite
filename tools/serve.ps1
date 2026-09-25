@@ -10,6 +10,7 @@ $types = @{
   ".png" = "image/png"; ".jpg" = "image/jpeg"; ".jpeg" = "image/jpeg"; ".webp" = "image/webp"; ".pdf" = "application/pdf"
   ".glb" = "model/gltf-binary"; ".gltf" = "model/gltf+json"; ".bin" = "application/octet-stream"
   ".hdr" = "application/octet-stream"; ".wasm" = "application/wasm"; ".md" = "text/plain; charset=utf-8"
+  ".mp4" = "video/mp4"
 }
 
 # Take the first free port from 5173 up
@@ -44,6 +45,7 @@ while ($listener.IsListening) {
       $response.StatusCode = 404
     } else {
       $ext = [IO.Path]::GetExtension($path).ToLowerInvariant()
+      $response.Headers.Add("Cache-Control", "no-store")  # always the current files after an edit, no stale cache
       $response.ContentType = if ($types.ContainsKey($ext)) { $types[$ext] } else { "application/octet-stream" }
       $stream = [IO.File]::OpenRead($path)
       try { $response.ContentLength64 = $stream.Length; $stream.CopyTo($response.OutputStream) } finally { $stream.Close() }

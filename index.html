@@ -15,8 +15,8 @@
 <!-- Fonts load without blocking first paint: a slow font CDN must never freeze the preloader -->
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;900&family=Inter:wght@400;500;600;700&display=swap"></noscript>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="sections.css">
+<link rel="stylesheet" href="style.css?v=0925j">
+<link rel="stylesheet" href="sections.css?v=0925j">
 <script>document.documentElement.classList.remove("no-js");</script>
 <script type="importmap">
 { "imports": {
@@ -122,6 +122,16 @@
     </ul>
   </nav>
   <a class="btn btn--ghost" href="#partner">Стать партнёром</a>
+  <!-- ≤820px: ссылки навигации скрыты, вместо них бургер + меню на весь экран (main.js) -->
+  <button class="nav__burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="navMenu"><i></i><i></i></button>
+  <div class="nav__menu" id="navMenu">
+    <ul>
+      <li><a href="#product">Продукция</a></li>
+      <li><a href="#about">О нас</a></li>
+      <li><a href="#creators">Отзывы</a></li>
+      <li><a href="#retail">Где купить</a></li>
+    </ul>
+  </div>
 </header>
 
 <main id="top">
@@ -142,7 +152,7 @@
           <span class="line"><span>Живи на полной</span></span>
         </h1>
         <div class="hero__foot">
-          <p class="hero__lede">Энергетики, чипсы, сухарики и освежающий мохито — всё, что нужно для твоего ритма. Для учёбы, работы, вечеринки, поездки или катки с друзьями</p>
+          <p class="hero__lede">Энергетики, чипсы, сухарики и освежающий мохито&nbsp;— всё, что нужно для твоего ритма. Для учёбы, работы, вечеринки, поездки или катки с друзьями</p>
           <div class="hero__actions">
             <a class="btn btn--solid" href="#product">Смотреть продукцию</a>
           </div>
@@ -251,23 +261,6 @@
     </div>
   </section>
 
-  <!-- 02 · Про бренд: спокойный блок, копия дословно с живого сайта клиента (qa/ref-doma-product/f1.jpg) —
-       не придумана. Реальная линейка вкусов, ничего не рвётся и не крутится, читается сразу. -->
-  <section class="about" id="about" data-ground="light">
-    <div class="wrap about__grid">
-      <div class="about__copy">
-        <p class="mono about__eyebrow">О нас</p>
-        <h2 class="about__title">Мы делаем то, что сами едим и пьём</h2>
-        <p class="about__lede">DOMA создаёт продукты для тех, кто не привык сидеть на месте</p>
-        <p class="about__text">Когда хочется зарядиться перед тренировкой, пережить долгий день, собраться с друзьями или просто поймать хороший вайб — мы уже рядом.</p>
-        <p class="about__text">Яркие вкусы, современный дизайн и продукты, которые становятся частью твоего дня.</p>
-      </div>
-      <div class="about__media">
-        <img src="assets/img/lineup-energy.webp" alt="Линейка энергетиков DOMA by GUF: №01 Ориджинал, №02 Энергия, №03 Тропик, №04 Персик" loading="lazy">
-      </div>
-    </div>
-  </section>
-
   <!-- 04 · Преимущества: акцентный фон как на живом сайте, 4 реальные причины (их же слова), карточки со
        рваным краем сверху/снизу — тот же зубчатый мотив, что в hero, в маленьком масштабе. -->
   <section class="perks" id="perks" data-ground="dark">
@@ -305,57 +298,38 @@
   <section class="creators" id="creators" data-ground="dark">
     <div class="wrap">
       <header class="product__head">
-        <p class="mono product__eyebrow">Блогеры и лейбл</p>
-        <h2 class="product__title">Это реально <em>кто-то</em> пьёт</h2>
+        <h2 class="product__title">Нас выбирают те,<br> кому реально заходит</h2>
       </header>
-      <div class="creators__wall">
-        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
-          <img src="assets/img/blog-01.webp" alt="GUF держит банку DOMA Energy Drink" loading="lazy">
-          <span class="creators__play" aria-hidden="true"></span>
-          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
-        </a>
-        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
-          <img src="assets/img/blog-02.webp" alt="Трек-лист DOMA / GUF" loading="lazy">
-          <span class="creators__play" aria-hidden="true"></span>
-          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
-        </a>
-        <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
-          <img src="assets/img/blog-03.webp" alt="Кадр с концерта DOMA / GUF" loading="lazy">
-          <span class="creators__play" aria-hidden="true"></span>
-          <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
-        </a>
-        <a class="creators__screen creators__screen--more" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
-          <span class="mono creators__more-n">VK</span>
-          <span class="creators__more-t">Ещё видео<br>@domabyguf</span>
-        </a>
+      <div class="creators__slider">
+        <div class="creators__wall">
+          <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+            <img src="assets/img/blog-01.webp" alt="GUF держит банку DOMA Energy Drink" loading="lazy">
+            <span class="creators__play" aria-hidden="true"></span>
+            <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+          </a>
+          <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+            <img src="assets/img/blog-02.webp" alt="Трек-лист DOMA / GUF" loading="lazy">
+            <span class="creators__play" aria-hidden="true"></span>
+            <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+          </a>
+          <a class="creators__screen" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+            <img src="assets/img/blog-03.webp" alt="Кадр с концерта DOMA / GUF" loading="lazy">
+            <span class="creators__play" aria-hidden="true"></span>
+            <span class="creators__cap"><b>Творческое объединение DOMA</b><i class="mono">VK · @domabyguf</i></span>
+          </a>
+          <a class="creators__screen creators__screen--more" href="https://vk.com/domabyguf" target="_blank" rel="noopener">
+            <span class="mono creators__more-n">VK</span>
+            <span class="creators__more-t">Ещё видео<br>@domabyguf</span>
+          </a>
+        </div>
+        <!-- стрелки видны только на 480–900px, где стена становится лентой-слайдером (creators.js, как в «Продукции») -->
+        <button class="product__arrow product__arrow--prev creators__arrow" type="button" aria-label="Предыдущее видео">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>
+        </button>
+        <button class="product__arrow product__arrow--next creators__arrow" type="button" aria-label="Следующее видео">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </button>
       </div>
-    </div>
-  </section>
-
-  <!-- 06 · Где купить: реальный ритейл-лист с живого сайта клиента (qa/ref-doma-product/f6.jpg). Логотипы —
-       файлы сетей, полученные от клиента (assets/img/retail/, см. credits.json). Тап — поиск сети + DOMA by GUF. -->
-  <section class="retail" id="retail" data-ground="light">
-    <div class="wrap">
-      <header class="product__head">
-        <p class="mono product__eyebrow">Где купить</p>
-        <h2 class="product__title">Выбирай удобный способ покупки</h2>
-      </header>
-      <ul class="retail__grid">
-        <li><img src="assets/img/retail/aromatny-mir.jpg" alt="Ароматный мир" loading="lazy"></li>
-        <li><img src="assets/img/retail/ashan.png" alt="Ашан" loading="lazy"></li>
-        <li><img src="assets/img/retail/samokat.png" alt="Самокат" loading="lazy"></li>
-        <li><img src="assets/img/retail/spar.png" alt="SPAR" loading="lazy"></li>
-        <li><img src="assets/img/retail/ozon.png" alt="OZON" loading="lazy"></li>
-        <li><img src="assets/img/retail/wb.png" alt="Wildberries" loading="lazy"></li>
-        <li><img src="assets/img/retail/familia.png" alt="Familia" loading="lazy"></li>
-        <li><img src="assets/img/retail/cyberpride.jpg" alt="КиберPride" loading="lazy"></li>
-        <li><img src="assets/img/retail/trafik.jpg" alt="Трафик" loading="lazy"></li>
-        <li><img src="assets/img/retail/sezon.png" alt="Сезон" loading="lazy"></li>
-        <li><img src="assets/img/retail/miratorg.png" alt="Мираторг" loading="lazy"></li>
-        <li><img src="assets/img/retail/globus.png" alt="Глобус" loading="lazy"></li>
-        <li><img src="assets/img/retail/centrum.jpg" alt="Центрум" loading="lazy"></li>
-        <li><img src="assets/img/retail/vil.png" alt="ВиЛ" loading="lazy"></li>
-      </ul>
     </div>
   </section>
 
@@ -403,27 +377,46 @@
        визуального конструктора, по решению пользователя. Реального бэкенда у концепта нет: сабмит перехватывается
        и показывает то же сообщение, что будет после интеграции — см. STATUS.md перед реальным запуском. -->
   <section class="partner" id="partner" data-ground="dark">
-    <div class="wrap partner__grid">
-      <div class="partner__copy">
-        <p class="mono product__eyebrow">Коллаборация</p>
-        <h2 class="product__title">Мы открыты для сотрудничества. Давай делать крутые проекты вместе</h2>
-        <p class="partner__lede">Остались вопросы, хотите предложить сотрудничество или запросить прайс-лист? Оставь заявку и мы обязательно свяжемся с тобой!</p>
+    <div class="wrap">
+      <header class="partner__head">
+        <h2 class="partner__title">Коллаборация</h2>
+        <p class="partner__lede">Мы открыты для сотрудничества. Давай делать крутые проекты вместе</p>
+      </header>
+      <div class="partner__cans" aria-hidden="true">
+        <img class="partner__can partner__can--guf" src="assets/img/partner-can-guf.webp" alt="" loading="lazy" decoding="async">
+        <img class="partner__can partner__can--front" src="assets/img/partner-can-front.webp" alt="" loading="lazy" decoding="async">
+      </div>
+      <div class="partner__body">
+        <p class="partner__text">Остались вопросы, хотите предложить сотрудничество или запросить прайс-лист? Оставь заявку и мы обязательно свяжемся с тобой!</p>
+        <form class="partner__form" id="partnerForm" novalidate>
+          <div class="partner__field">
+            <label class="sr-only" for="pfName">Имя</label>
+            <input id="pfName" name="name" type="text" placeholder="Имя" autocomplete="name" required aria-describedby="pfNameErr">
+            <p class="partner__error" id="pfNameErr" hidden></p>
+          </div>
+          <div class="partner__field">
+            <label class="sr-only" for="pfPhone">Телефон</label>
+            <span class="partner__flag" aria-hidden="true"></span>
+            <input id="pfPhone" name="phone" type="tel" placeholder="+7 (000) 000-00-00" autocomplete="tel" required aria-describedby="pfPhoneErr">
+            <p class="partner__error" id="pfPhoneErr" hidden></p>
+          </div>
+          <div class="partner__field">
+            <label class="sr-only" for="pfEmail">Электронная почта</label>
+            <input id="pfEmail" name="email" type="email" placeholder="Email" autocomplete="email" required aria-describedby="pfEmailErr">
+            <p class="partner__error" id="pfEmailErr" hidden></p>
+          </div>
+          <div class="partner__field">
+            <label class="partner__check"><input id="pfConsent" name="consent" type="checkbox" required aria-describedby="pfConsentErr"><span>Я даю согласие на <a href="#">обработку персональных данных</a></span></label>
+            <p class="partner__error" id="pfConsentErr" hidden></p>
+          </div>
+          <button class="btn btn--solid" type="submit">Отправить</button>
+          <p class="partner__done mono" role="status" hidden>Заявка принята — свяжемся с вами в ближайшее время.</p>
+        </form>
         <dl class="partner__contacts">
-          <div><dt>Запрос КП</dt><dd><a href="mailto:event@doma.moscow">event@doma.moscow</a></dd></div>
-          <div><dt>Коллаборации в соцсетях</dt><dd><a href="tel:+79653149378">+7 965 314 93 78</a></dd></div>
+          <div><dt>Запрос КП:</dt> <dd><a href="mailto:event@doma.moscow">event@doma.moscow</a></dd></div>
+          <div><dt>Коллаборации в соцсетях:</dt> <dd><a href="tel:+79653149378">+7 965 314 93 78</a></dd></div>
         </dl>
       </div>
-      <form class="partner__form" id="partnerForm" novalidate>
-        <label class="sr-only" for="pfName">Имя</label>
-        <input id="pfName" name="name" type="text" placeholder="Имя" autocomplete="name" required>
-        <label class="sr-only" for="pfPhone">Телефон</label>
-        <input id="pfPhone" name="phone" type="tel" placeholder="+7 (000) 000-00-00" autocomplete="tel" required>
-        <label class="sr-only" for="pfEmail">Электронная почта</label>
-        <input id="pfEmail" name="email" type="email" placeholder="Электронная почта" autocomplete="email">
-        <label class="partner__check"><input type="checkbox" required><span>Я даю согласие на обработку персональных данных</span></label>
-        <button class="btn btn--solid" type="submit">Отправить</button>
-        <p class="partner__done mono" role="status" hidden>Заявка принята — свяжемся с вами в ближайшее время.</p>
-      </form>
     </div>
   </section>
 
@@ -439,6 +432,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js"></script>
-<script type="module" src="main.js"></script>
+<script type="module" src="main.js?v=0925j"></script>
 </body>
 </html>

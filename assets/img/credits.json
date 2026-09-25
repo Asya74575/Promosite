@@ -24,11 +24,59 @@
     "used_for": "Блок 1 (Hero) — пачка чипсов «Краб» №01, фон убран (white-threshold, Pillow)"
   },
   {
+    "file": "bag-01.webp .. bag-05.webp",
+    "source_page": "client material: Фото продукции/PHOTO DOMA BY GUF FMCG/preview_01.jpg .. preview_05.jpg",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned product photography",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 3 (Продукция) — рейл вкусов чипсов №01–05, фон убран (white-threshold, tools/cutout-white.py, тот же метод что и hero-bag.webp)"
+  },
+  {
+    "file": "can-01.webp .. can-04.webp",
+    "source_page": "client material: Фото продукции/PHOTO DOMA BY GUF FMCG/Preview_Energy_DOMA_1.png .. _4.png",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned product photography",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 3 (Продукция) — рейл вкусов энергетиков №01–04, уже с альфа-каналом от клиента, только ресайз в webp"
+  },
+  {
+    "file": "blog-01.webp, blog-02.webp, blog-03.webp",
+    "source_page": "client's own live site https://doma.moscow/product (captured to qa/ref-doma-product/f5.jpg), real posts from VK @domabyguf",
+    "author": "DOMA by GUF (client) — «Творческое объединение DOMA»",
+    "licence": "client-owned content, already published on their own product page",
+    "date_downloaded": "2026-09-22 (site screenshot)",
+    "used_for": "Блок 5 (Блогеры) — стена экранов; их родной play-button/подпись обрезаны из кадра, поверх — наш play-button и подпись. Собчак/TikTok/trapgladiator ячейки не добавлены — нет проверенных ссылок, см. STATUS.md"
+  },
+  {
+    "file": "lineup-energy.webp",
+    "source_page": "client material: Фото продукции/PHOTO DOMA BY GUF FMCG/05 Общая.jpg",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned product photography",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 2 (Про бренд) — студийный кадр всех 4 вкусов энергетика вместе, фон убран (white-threshold)"
+  },
+  {
     "file": "brick-preloader.webp",
     "source_page": "https://unsplash.com/photos/black-and-white-brick-wall-9a58YsGiTPk",
     "author": "see Unsplash photo page",
     "licence": "Unsplash License (free for commercial use, no attribution required)",
     "date_downloaded": "2026-09-22",
     "used_for": "Прелоадер — тёмная кирпичная стена под граффити DOMA"
+  },
+  {
+    "file": "retail/aromatny-mir.jpg, retail/ashan.png, retail/samokat.png, retail/spar.png, retail/ozon.png, retail/wb.png, retail/familia.png, retail/cyberpride.jpg, retail/trafik.jpg, retail/sezon.png, retail/miratorg.png, retail/globus.png, retail/centrum.jpg, retail/vil.png",
+    "source_page": "client material: ../Фото для сайта/Лого/ (AM, Ashan, Samokat, Spar, Ozon, WB, Familia, Pride, Trafik, Sezon, Miratorg, Globus, Centrum, BIM)",
+    "author": "each retailer — trademark/logo of the respective retail chain",
+    "licence": "retailer trademarks, used for nominative informational purposes only (\"where to buy\" listing), not as an endorsement or brand partnership claim",
+    "date_downloaded": "n/a — provided by client, 2026-09-24",
+    "used_for": "Блок 6 (Где купить) — сетка логотипов ритейлеров, заменяет прежние типографские «наклейки»"
+  },
+  {
+    "file": "retail/bg-silk.webp",
+    "source_page": "client material: ../Фото для сайта/4.jpg (предоставлено пользователем 2026-09-24)",
+    "author": "DOMA by GUF (client)",
+    "licence": "client-owned material",
+    "date_downloaded": "n/a — provided by client",
+    "used_for": "Блок 6b (Где купить, вариант 2) — фон плиток-логотипов (retailWall__tile, sections.css); пересжато из 1440×2122 JPG в 900×1326 WEBP (q82), оригинал в assets не хранится"
   }
 ]
