@@ -250,16 +250,8 @@ body.ground-light .brand__mark { filter: invert(1); }
   .hero__stage { overflow: clip visible; }
 }
 
-/* Scan-line: one accent-coloured sweep across the stage the moment the product is revealed (brand.md 2026-09-24 —
-   echoes the real client Reel's rentgen/CT-scan effect, kept to a single line, not a full HUD overlay). */
-.hero__scan {
-  position: absolute; left: 0; right: 0; top: -6%; z-index: 5; height: 2px; opacity: 0; pointer-events: none;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 85%, #fff 15%) 50%, transparent);
-  box-shadow: 0 0 24px 4px color-mix(in srgb, var(--accent) 70%, transparent);
-}
 /* Слой банки и пачки поверх карточек «Преимуществ» (hero-doma.js): карточки проезжают за продуктом. Тот же z-index,
-   что у .perks, но стоит после него в DOM — поэтому выше. Скан-линия поднята над ним, чтобы в hero она по-прежнему
-   проходила поверх продукта. */
+   что у .perks, но стоит после него в DOM — поэтому выше. */
 .hero__front { position: absolute; inset: 0; z-index: 4; width: 100%; height: 100%; pointer-events: none; }
 /* ≤900px: на невысоком окне банка и пачка продолжаются на тёмную полосу под сценой (perks.js --perks-spill) */
 @media (max-width: 900px) { .hero__front { bottom: auto; height: calc(100% + var(--perks-spill, 0px)); } }

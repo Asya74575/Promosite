@@ -3,7 +3,7 @@
 // (scenario.md 2026-09-24) — the page opens straight on the hero, no curtain to gate behind.
 // Rules: .claude/skills/scroll-3d-site-playbook/references/.
 import { frame, compileAll, reduced } from "./world.js";
-import { initHero } from "./hero-doma.js?v=09251349";
+import { initHero } from "./hero-doma.js?v=09251420";
 import { initPerks } from "./perks.js";
 import { createProduct } from "./product.js";
 import { initCreators } from "./creators.js";

@@ -3,7 +3,7 @@
 // plane meshes — a sprite always faces the camera by construction, so it cannot end up "cut off at an angle"
 // the way the v1 Three.js hero did under real mouse-wheel scroll (see STATUS.md 2026-09-24). No tear-mask reveal
 // (removed 2026-09-24 — its partially-open jagged edge read as an unwanted triangle in the frame): the stage is
-// plain dark, objects fade/rise straight in. The scan-line stays DOM/CSS, not shader work — the two real shader
+// plain dark, objects fade/rise straight in (scan-line removed 2026-09-25, user request). The two real shader
 // bugs found in the v1 attempt (sRGB encoding, smoothstep(a,b) needing a<b) are gone because there is no
 // custom fragment shader here at all.
 import * as THREE from "three";
@@ -65,7 +65,6 @@ function poolTexture() {
 export function initHero({ gsap, ScrollTrigger }) {
   const section = document.getElementById("hero");
   const stage = document.getElementById("heroStage");
-  const scanEl = document.getElementById("heroScan");
   const scene = new THREE.Scene();
   // The scene, not the DOM, owns the dark stage colour: .hero has no opaque background (it would paint over the
   // canvas — see style.css) and the renderer's own clear is transparent, so empty canvas area must come from
@@ -140,7 +139,8 @@ export function initHero({ gsap, ScrollTrigger }) {
   const frontCanvas = document.createElement("canvas");
   frontCanvas.className = "hero__front";
   frontCanvas.setAttribute("aria-hidden", "true");
-  (document.getElementById("perks") || scanEl).after(frontCanvas);
+  const perksEl = document.getElementById("perks");
+  if (perksEl) perksEl.after(frontCanvas); else stage.prepend(frontCanvas);
   const frontRenderer = new THREE.WebGLRenderer({ canvas: frontCanvas, antialias: !lite, alpha: true, stencil: false });
   frontRenderer.setClearColor(0x000000, 0);
   frontRenderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -171,16 +171,9 @@ export function initHero({ gsap, ScrollTrigger }) {
   // Reveal progress: boot-in on load, continuing via scroll — `max(boot, scroll)`, read fresh every frame in
   // update() below so a plain object, not a DOM style property, is the single source of truth.
   const bootReveal = { v: reduced ? 1 : 0 };
-  let scanFired = false;
-  const fireScan = () => {
-    if (scanFired || reduced) return;
-    scanFired = true;
-    gsap.fromTo(scanEl, { autoAlpha: 0, top: "-6%" }, { autoAlpha: 1, top: "106%", duration: 0.85, ease: "power2.inOut",
-      onComplete: () => gsap.set(scanEl, { autoAlpha: 0 }) });
-  };
 
   if (!reduced) {
-    gsap.to(bootReveal, { v: 1, duration: 1.1, ease: "power3.out", delay: 0.15, onComplete: fireScan });
+    gsap.to(bootReveal, { v: 1, duration: 1.1, ease: "power3.out", delay: 0.15 });
     gsap.from(".hero h1 .line > span", { yPercent: 110, duration: 0.65, ease: "power4.out", stagger: 0.055, delay: 0.6 });
     gsap.from(".hero__foot", { y: 18, autoAlpha: 0, duration: 0.5, ease: "power3.out", delay: 0.85 });
     gsap.from(".hero__cue", { autoAlpha: 0, duration: 0.45, delay: 1.15 });
@@ -348,7 +341,6 @@ export function initHero({ gsap, ScrollTrigger }) {
 
       // Reveal = whichever is further along, boot-in or scroll
       const revealProg = reduced ? 1 : Math.max(bootReveal.v, smooth(0, 0.3, v));
-      if (!reduced && revealProg > 0.15) fireScan();
 
       // Objects fade and rise into their resting position as revealProg advances
       const e = 1 - Math.pow(1 - revealProg, 3);
