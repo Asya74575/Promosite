@@ -80,11 +80,12 @@ export function initPerks({ ScrollTrigger }) {
     const spacing = Math.max(W * 0.52, cw * 1.18);
     R = Math.max(W * 2.2, spacing * 3.4);
     step = Math.asin(Math.min(0.9, spacing / R));
-    // Numbers of the two half-way cards (d = ±0.5): number offset from the card centre, turned with the card
+    // Numbers of the two half-way cards (d = ±0.5): number offset from the card centre, turned with the card.
+    // ≤499px the wheel stops on card 4 in the centre (d = 0) — its number is the one (hero-doma.js ≤479 landing)
     let sum = 0, cnt = 0;
     cards.forEach((el, i) => {
       const d = i - end;
-      if (Math.abs(d) !== 0.5) return;
+      if (Math.abs(d) !== 0.5 && d !== 0) return;
       const nEl = el.querySelector(".perks__n");
       const a = d * step, rot = a + Math.sin(d * Math.PI) * 2.5 / 57.2958;
       const dx = nEl.offsetLeft + nEl.offsetWidth / 2 - el.offsetWidth / 2;

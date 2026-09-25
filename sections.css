@@ -81,6 +81,16 @@
 @media (max-width: 499px) {
   .product__panel { grid-template-rows: auto minmax(0, 1fr); }
 }
+/* ≤479px (адаптив 390, пользователь 2026-09-25): в конце ленты последняя карточка прижималась вправо и слева торчала
+   полоска предыдущей (коричневый «Персик»). Пустое место в конце — последняя встаёт к левому краю, как все */
+@media (max-width: 479px) {
+  .product__track::after { content: ""; flex: 0 0 calc(100% - var(--panel)); }
+}
+/* iOS Safari (пользователь 2026-09-25): drop-shadow на фото банки рисовался серым прямоугольником по всей картинке —
+   на iOS тень у фото убрана */
+@supports (-webkit-touch-callout: none) {
+  .product__img { filter: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   .product__track, .product__img, .product__arrow { transition: none; }
 }

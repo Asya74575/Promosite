@@ -239,6 +239,21 @@ export function initHero({ gsap, ScrollTrigger }) {
     // + PERKS_DROP: update() takes the ≤900px drop off every frame; this landing is already exact
     return (tabEnd = { key, k, x: k * b.cx - vw / 2, y: k * b.y0 - top + PERKS_DROP });
   };
+  // ≤479px (user 2026-09-25, Safari on iPhone: the pair landed small and far under the card): the second-screen
+  // landing works like tabFrame — the pair's top level with the top of the №04 digits (perks.js perksNumTop), grown
+  // until PHONE_SHOW of its height reaches the cut at the top of «Фото + видео», but never wider than the screen;
+  // then it sinks below the digits instead. Measured from the real card, so the window height (Safari bars) doesn't matter.
+  const PHONE_SHOW = 0.75;
+  let phoneEnd = null;
+  const phoneFrame = () => {
+    const key = `${perksSpill} ${perksNumTop}`;
+    if (phoneEnd && phoneEnd.key === key) return phoneEnd;
+    const b = pairBounds(vw, vh, 9, SPREAD);
+    const cut = vh + perksSpill;
+    const k = Math.min((cut - perksNumTop) / (PHONE_SHOW * b.h), vw / b.w);
+    const top = Math.max(perksNumTop, cut - PHONE_SHOW * b.h * k);
+    return (phoneEnd = { key, k, x: k * b.cx - vw / 2, y: k * b.y0 - top + PERKS_DROP });
+  };
   const layoutMid = () => {
     midLaid = true;
     copyEl.style.top = "";
@@ -277,7 +292,7 @@ export function initHero({ gsap, ScrollTrigger }) {
       frontRenderer.setSize(w, h + perksSpill, false);
       frontSpill = perksSpill;
       midLaid = false;
-      tabEnd = null;
+      tabEnd = phoneEnd = null;
     },
     update(dt) {
       pointer.ease(dt, 2.2);
@@ -306,8 +321,9 @@ export function initHero({ gsap, ScrollTrigger }) {
         // ≤479px: hero frame → full-height frame (dolly), then → second-screen landing (travel)
         const mix = (a, b, t) => a + (b - a) * t;
         const f0 = frameZ ? { k: mix(frame0.k, frameZ.k, dolly), x: mix(frame0.x, frameZ.x, dolly), y: mix(frame0.y, frameZ.y, dolly) } : frame0;
-        const lerp = (a, b) => a + (b - a) * travel, k = lerp(f0.k, frame1.k);
-        off = [vw * k, vh * k, lerp(f0.x, frame1.x), lerp(f0.y, frame1.y) - drop];
+        const f1 = frameZ && perksNumTop ? phoneFrame() : frame1;
+        const lerp = (a, b) => a + (b - a) * travel, k = lerp(f0.k, f1.k);
+        off = [vw * k, vh * k, lerp(f0.x, f1.x), lerp(f0.y, f1.y) - drop];
       } else if (vw && tab && can.userData.pts && bag.userData.pts) {
         // from the hero frame (no zoom, pair right of centre) to the 646–820px landing (tabFrame)
         const f = tabFrame(), lerp = (a, b) => a + (b - a) * travel, k = lerp(1, f.k);
