@@ -233,6 +233,12 @@
 @media (max-width: 499px) {
   .creators__screen { aspect-ratio: 9 / 16; }
 }
+/* ≤479px (адаптив 390, пользователь 2026-09-25): карточка видео того же размера, что карточка «Продукции» —
+   84% ленты шириной 100% − 2×20px, высота как у .product__panel на ≤640 */
+@media (max-width: 479px) {
+  .creators__wall { margin-inline: calc(20px - var(--gutter)); }
+  .creators__screen { flex-basis: 84%; aspect-ratio: auto; height: clamp(480px, 82svh, 680px); }
+}
 
 /* ---------- Block 6b · Где купить — вариант 2 (масонри-стена, retail-wall.js) ---------- */
 /* Механика — прямое повторение liqium.ru/services («Наши клиенты», по просьбе пользователя 2026-09-24): колонки
@@ -293,6 +299,8 @@
 .partner__contacts a:hover { text-decoration: underline; text-underline-offset: 3px; }
 .partner__form { display: grid; gap: 14px; }
 @media (max-width: 499px) { .partner__form { width: min(100%, 360px); margin-inline: auto; } }  /* форма 360px по центру (пользователь 2026-09-25) */
+/* ≤479px (адаптив 390, пользователь 2026-09-25): текст над формой 14px (стиль Small), строки выровнены — без одного слова в последней */
+@media (max-width: 479px) { .partner__text { font-size: var(--t-small); text-wrap: balance; } }
 .partner__form input:not([type="checkbox"]) {
   height: 54px; padding-inline: 24px; border: 1px solid var(--rule-dark); border-radius: 999px; background: color-mix(in srgb, #fff 6%, transparent);
   color: #fff; font: 400 var(--t-body)/1.2 var(--f-body); transition: border-color .2s;
@@ -378,6 +386,11 @@
   .duo { height: auto; }
   .duo__half { aspect-ratio: 9 / 16; }
 }
+/* ≤479px (адаптив 390, пользователь 2026-09-25): без подъёма на 100px — в узкой половине он срезал голову человеку.
+   Ролик 9:16, как и половина, поэтому встаёт целиком */
+@media (max-width: 479px) {
+  .duo__half video { height: 100%; margin-top: 0; }
+}
 
 /* ---------- Block 5 · Блок Инсты ---------- */
 /* Закреплённая сцена: плитки-посты стоят по большому овалу вокруг заголовка, низ овала уходит за край экрана
@@ -408,12 +421,20 @@
 /* ≤499px (адаптив 480, пользователь 2026-09-25; 499 — запас: в DevTools «480» на экране 2x даёт 481): межблочные отступы 60px от контента до контента
    (полноэкранные «Фото + видео» и «Инста» без полей, как были) */
 @media (max-width: 499px) {
-  .product { padding-top: 60px; }
-  /* от контента до контента 60px на каждом стыке: у «Инсты» низ овала в 12px от края блока (insta.js) — 12 + 48;
-     на границах фона «Где купить» по 30 с каждой стороны; от контактов до футера 60 */
-  .creators { padding-block: 48px 30px; }
-  .retailWall { padding-block: 30px; }  /* граница красного фона посередине стыка: 30 + 30 = 60 (пользователь 2026-09-25) */
-  .partner { padding-block: 30px 60px; }
+  /* от контента до верха БУКВ следующего заголовка 60px на каждом стыке (замер по пикселям, tools/qa/joints-ink.mjs):
+     буквы заголовков стоят на ~3px ниже коробки строки, у «Какой вкус твой?» — на 3px выше, поля поправлены на это.
+     У «Инсты» низ овала в 12px от края блока (insta.js). На границах фона «Где купить» по 60 с каждой стороны
+     (до границы 60, от границы до букв 60 — пользователь 2026-09-25); от контактов до футера 60 */
+  .product { padding-top: 63px; }
+  .creators { padding-block: 45px 60px; }
+  .retailWall { padding-block: 57px 60px; }
+  .partner { padding-block: 57px 60px; }
   .partner__contacts { margin-bottom: 0; }  /* браузерные 16px у <dl> добавлялись к 60 */
   .footer__legal { padding-block: 32px; }  /* копирайт: 32px сверху и снизу (пользователь 2026-09-25, было 18) */
+}
+/* <375px (адаптив 360, пользователь 2026-09-25): «НАС ВЫБИРАЮТ ТЕ,» не влезает в строку и «ТЕ,» оставалось одно —
+   перенос <br> снят, строки выравниваются по длине */
+@media (max-width: 374px) {
+  .creators .product__title br { display: none; }
+  .creators .product__title { text-wrap: balance; }
 }

@@ -43,9 +43,9 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { background: var(--mist); }
+html { background: #050505; }  /* все секции тёмные: на стыках, где WebGL-холст отстаёт на пиксель, фон страницы не читается белой полосой (пользователь 2026-09-25) */
 html.lenis, html.lenis body { height: auto; }
-body { margin: 0; background: var(--mist); color: var(--ink); font: 400 var(--t-body)/1.6 var(--f-body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+body { margin: 0; background: #050505; color: var(--ink); font: 400 var(--t-body)/1.6 var(--f-body); -webkit-font-smoothing: antialiased; overflow-x: clip; }
 img, canvas { display: block; max-width: 100%; }
 
 /* One WebGL context for the whole page (world.js) — fixed behind everything. Content must be explicitly
@@ -328,11 +328,18 @@ body.ground-light .brand__mark { filter: invert(1); }
 @media (max-width: 699px) {
   .hero { background: #050505; }
 }
-/* <375px шапка как была до 2026-09-25: 64px там не помещается даже уменьшенным */
-@media (max-width: 374px) {
-  .brand { min-width: auto; }
-  .brand__mark { height: 40px; }
-  .nav .btn { flex: 0 1 auto; }
+
+/* «Стать партнёром» в меню — только ≤479px (адаптив 390, пользователь 2026-09-25): в шапке остаются логотип и бургер.
+   В меню кнопка того же вида, что была в шапке (стиль Label, а не ссылок меню), по центру под ссылками. */
+.nav__menu-cta { display: none; }
+@media (max-width: 479px) {
+  .nav > .btn { display: none; }
+  .nav__burger { margin-left: auto; }
+  .nav__menu .nav__menu-cta {
+    display: inline-flex; align-self: stretch; justify-content: center; margin: 40px 0 0;  /* по ширине контентной части (пользователь 2026-09-25); margin-left: auto от .nav .btn (≤820) сбрасываем */
+    font-family: var(--f-mono); font-weight: 600; font-size: var(--t-label); line-height: 1.2; letter-spacing: .08em;
+  }
+  .nav__menu .nav__menu-cta:hover { color: var(--navy); }
 }
 
 /* Reduced motion: no pinning or scrubbing, the page reads as a normal document */

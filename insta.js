@@ -50,6 +50,9 @@ export function initInsta({ ScrollTrigger }) {
     CY = (top + bottom) / 2;
     RY = (bottom - top) / 2;
     RX = narrow ? W / 2 - S * 0.3 : Math.min(W / 2 - S * 0.75, ry0 * 1.3);
+    // ≤479px (адаптив 390, user 2026-09-25): a true circle, not a tall oval — as wide as before, centred on the headline
+    const circle = matchMedia("(max-width: 479px)").matches;
+    if (circle) { RY = RX; CY = cy0 - ry0 * 0.1; }
 
     SA = Math.round(narrow ? W * 0.42 : Math.min(W * 0.2, H * 0.34));
     PITCHA = SA * 1.12;
@@ -68,8 +71,10 @@ export function initInsta({ ScrollTrigger }) {
 
     // card count comes from the oval as it was before the bottom fix (ry0), so the arc keeps the same cards
     let P0 = 0;
-    for (let k = 1, qx = 0, qy = -ry0; k <= M; k++) {
-      const t = (k / M) * Math.PI * 2, x = RX * Math.sin(t), y = -ry0 * Math.cos(t);
+    // (≤479px circle: from the circle itself, so its cards don't pile up)
+    const ryN = circle ? RY : ry0;
+    for (let k = 1, qx = 0, qy = -ryN; k <= M; k++) {
+      const t = (k / M) * Math.PI * 2, x = RX * Math.sin(t), y = -ryN * Math.cos(t);
       P0 += Math.hypot(x - qx, y - qy);
       qx = x; qy = y;
     }
@@ -93,8 +98,8 @@ export function initInsta({ ScrollTrigger }) {
     // Act 1: the headline would stand half a screen under the previous block. Raise it (and the arc under it) so
     // the gap above it matches the other blocks' top padding (clamp(90px, 14vh, 160px), user 2026-09-24); the
     // morph brings it back down to the middle of the oval.
-    // ≤499px (the 480 adaptive, user 2026-09-25): 60px, like every block gap there
-    const pad = matchMedia("(max-width: 499px)").matches ? 60 : Math.min(160, Math.max(90, window.innerHeight * 0.14));
+    // ≤499px (the 480 adaptive, user 2026-09-25): 60px to the glyphs, like every block gap there (the ink sits 3px above the line box)
+    const pad = matchMedia("(max-width: 499px)").matches ? 63 : Math.min(160, Math.max(90, window.innerHeight * 0.14));
     LIFT = Math.max(0, CYT - copy.offsetHeight / 2 - pad);
   };
 

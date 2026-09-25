@@ -195,7 +195,11 @@ export function initHero({ gsap, ScrollTrigger }) {
   // camera (setViewOffset with a larger full size), solved from the pair's real outline in that camera's view.
   const midMQ = matchMedia("(max-width: 699px)");
   const MID_GAP = 40, MID_TOP = 50, MID_SHOW = 0.55; // SHOW: share of the pair's height left on screen (desktop look)
-  let mid = false, midLaid = false, frame0 = null, frame1 = null;
+  // ≤479px (user 2026-09-25, адаптив 390): while the copy fades, the pair grows to the full screen height under the
+  // nav (frameZ, centred), then shrinks into the second-screen landing (frame1) as before. The zoom is done by the
+  // view offset only, so the camera stays at the rest distance the frames are solved for.
+  const zoomMQ = matchMedia("(max-width: 479px)");
+  let mid = false, midLaid = false, frame0 = null, frame1 = null, frameZ = null;
   const baseCam = new THREE.PerspectiveCamera(32, 1, 0.1, 60);
   const tmp = new THREE.Vector3();
   // Screen bounds (px) of the drawn pair at rest, seen by the un-offset rest camera (pointer centred, no dolly)
@@ -238,7 +242,7 @@ export function initHero({ gsap, ScrollTrigger }) {
   const layoutMid = () => {
     midLaid = true;
     copyEl.style.top = "";
-    frame0 = frame1 = null;
+    frame0 = frame1 = frameZ = null;
     mid = midMQ.matches && !reduced;
     if (!mid) return;
     const b = pairBounds(vw, vh);
@@ -252,6 +256,10 @@ export function initHero({ gsap, ScrollTrigger }) {
     const k0 = objH / b.h, k1 = maxW / b.w;
     frame0 = { k: k0, x: k0 * b.cx - vw / 2, y: k0 * b.y0 - (top + copyH + MID_GAP) };
     frame1 = { k: k1, x: k1 * b.cx - vw / 2, y: k1 * b.y0 - (vh - MID_SHOW * b.h * k1) };
+    if (zoomMQ.matches) {
+      const kz = (vh - nav) / b.h;
+      frameZ = { k: kz, x: kz * b.cx - vw / 2, y: kz * b.y0 - nav };
+    }
   };
 
   const chapter = register({
@@ -286,16 +294,20 @@ export function initHero({ gsap, ScrollTrigger }) {
       // 646–820px (user 2026-09-24): the pair lands twice as large as on phone and sinks past the bottom edge, as on desktop
       const tab = vw >= 700 && vw < 821;
       const zPhone = vw && vw < 821 && !mid && !tab ? 12 * travel : 0;
-      camera.position.z = 9 - 3.6 * zoom + zPhone;
-      camera.position.y = 0.3 - 0.15 * zoom;
+      const camZoom = frameZ ? 0 : zoom; // ≤479px: the zoom is the view offset (frameZ), not the camera dolly
+      camera.position.z = 9 - 3.6 * camZoom + zPhone;
+      camera.position.y = 0.3 - 0.15 * camZoom;
       camera.position.x = damp(camera.position.x, 1.15 + pointer.x * 0.22, 4, dt);
       camera.lookAt(2.9, -0.1 + pointer.y * 0.08, 0);
       // ≤900px (user 2026-09-25): on the second screen the pair sits PERKS_DROP px lower so it clears the card text
       const drop = vw && vw <= 900 ? PERKS_DROP * travel : 0;
       let off = null; // [fullW, fullH, x, y] of the view offset, reused below for the taller front layer
       if (vw && frame0) {
-        const lerp = (a, b) => a + (b - a) * travel, k = lerp(frame0.k, frame1.k);
-        off = [vw * k, vh * k, lerp(frame0.x, frame1.x), lerp(frame0.y, frame1.y) - drop];
+        // ≤479px: hero frame → full-height frame (dolly), then → second-screen landing (travel)
+        const mix = (a, b, t) => a + (b - a) * t;
+        const f0 = frameZ ? { k: mix(frame0.k, frameZ.k, dolly), x: mix(frame0.x, frameZ.x, dolly), y: mix(frame0.y, frameZ.y, dolly) } : frame0;
+        const lerp = (a, b) => a + (b - a) * travel, k = lerp(f0.k, frame1.k);
+        off = [vw * k, vh * k, lerp(f0.x, frame1.x), lerp(f0.y, frame1.y) - drop];
       } else if (vw && tab && can.userData.pts && bag.userData.pts) {
         // from the hero frame (no zoom, pair right of centre) to the 646–820px landing (tabFrame)
         const f = tabFrame(), lerp = (a, b) => a + (b - a) * travel, k = lerp(1, f.k);
@@ -310,7 +322,8 @@ export function initHero({ gsap, ScrollTrigger }) {
       if (off) camera.setViewOffset(...off, vw, vh);
       // Hero copy lifts away as the pair starts its travel; the cue goes first
       if (!reduced) {
-        const out = smooth(0.3, 0.85, v);
+        // ≤479px: the copy fades from the first scroll, together with the pair growing to full height (frameZ)
+        const out = frameZ ? smooth(0, 0.4, v) : smooth(0.3, 0.85, v);
         copyEl.style.opacity = 1 - out;
         copyEl.style.transform = out ? `translateY(${(-out * 22).toFixed(2)}vh)` : "";
         copyEl.style.visibility = out >= 1 ? "hidden" : "";

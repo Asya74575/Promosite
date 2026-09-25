@@ -29,7 +29,9 @@ const MAX_DPR = lite ? 1.25 : 1.75;
 let W = 0, H = 0, dpr = 1;
 
 function fit() {
-  const w = innerWidth, h = innerHeight;
+  // Размер холста = видимая область без полосы прокрутки (innerWidth её включает: холст сжимался и справа
+  // оставалась светлая полоса фона страницы, пользователь 2026-09-25)
+  const de = document.documentElement, w = de.clientWidth, h = de.clientHeight;
   const d = Math.min(devicePixelRatio || 1, MAX_DPR);
   if (w === W && h === H && d === dpr) return;
   W = w; H = h; dpr = d;
