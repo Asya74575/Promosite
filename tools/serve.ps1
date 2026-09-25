@@ -1,4 +1,4 @@
-# Local web server for the AWRIS demo, started by start-demo.bat.
+# Local web server for the Сайт 2 demo, started by start-demo.bat.
 # ES modules, fetch() and 3D models don't load from a double-clicked file (file://), so the site has to be served
 # over http. This uses the .NET HttpListener built into Windows PowerShell, so nothing needs to be installed.
 param([int]$Port = 5173, [switch]$NoBrowser)
@@ -28,7 +28,7 @@ if (-not $listener) {
 
 $url = "http://localhost:$Port/"
 Write-Host ""
-Write-Host "  AWRIS demo is running at $url"
+Write-Host "  Сайт 2 demo is running at $url"
 Write-Host "  Keep this window open while you view the site. Close it to stop the server."
 Write-Host ""
 if (-not $NoBrowser) { Start-Process $url }

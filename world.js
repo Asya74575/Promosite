@@ -4,7 +4,7 @@
 // frame the renderer draws each chapter into the screen rectangle of its [data-stage] element, scissored to it.
 // The DOM stays on top and keeps the scroll, the text and the pointer; the world only paints where it is told.
 // Chapters are independent scenes sharing one context/canvas — not one camera flying through one continuous space.
-// Adapted from templates/reference-lumara/site/world.js (shipped, client-reviewed pattern) — see STATUS.md 2026-09-24
+// Adapted from templates/reference-site1/site/world.js (shipped, client-reviewed pattern) — see STATUS.md 2026-09-24
 // for why: the v1 hero used a bespoke single Three.js scene and broke apart under real (non-scripted) scroll.
 
 import * as THREE from "three";

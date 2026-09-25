@@ -1,6 +1,6 @@
 // Hero globe: coastline + staggered land dots, an invisible depth sphere hiding the far side, member pins with
 // halos and arrival pulses, arcs flowing into Bahrain, HTML labels that fade when turning away, gentle sway and drag.
-// Styled in AWRIS brand colours: blue dots like the logo's dotted Arab world, a navy body, rim light and the
+// Styled in Сайт 2 brand colours: blue dots like the logo's dotted Arab world, a navy body, rim light and the
 // canopy arc live in CSS/SVG (index.html, style.css); the sky is stars.js.
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
@@ -14,7 +14,7 @@ const COLORS = {
   arc: "#74bbf4",    // flows into Bahrain
 };
 
-// Countries named on awris.com only: "Countries we serve" (Bahrain, Qatar, Saudi Arabia, UAE, Jordan, Kuwait)
+// Countries named on the Сайт 2 website only: "Countries we serve" (Bahrain, Qatar, Saudi Arabia, UAE, Jordan, Kuwait)
 // and the technical board's member-company countries on /about (Egypt, Iraq, Lebanon, Tunisia).
 // `side` places the label around its pin so the dense Gulf cluster stays legible.
 const PLACES = {
@@ -158,7 +158,7 @@ function haloTexture() {
 }
 
 // Options: places = { key: { label, lat, lng, side, hq? } }, routes = [[fromKey, toKey]], colors = { coast, land, pin, hq, arc },
-// views = { desktop|mobile: { y: rad(-90 - longitudeFacing) + 2π, x: tilt, sway } }. Defaults are the AWRIS set below.
+// views = { desktop|mobile: { y: rad(-90 - longitudeFacing) + 2π, x: tilt, sway } }. Defaults are the Сайт 2 set below.
 export async function createGlobe({ container, canvas, reducedMotion = false, places = PLACES, routes = ROUTES, colors = COLORS, views = VIEW }) {
   const mobile = () => container.clientWidth < 768 || innerWidth <= 767;
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "low-power" });

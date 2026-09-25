@@ -275,7 +275,7 @@ export function initHero({ gsap, ScrollTrigger }) {
     toneMapping: THREE.ACESFilmicToneMapping, exposure: 1.05,
     // Objects sit right of centre in the frame (not by moving them in world space — camera.lookAt always
     // centres its target regardless of world position, see STATUS.md 2026-09-24) via an asymmetric view
-    // offset, the same trick reference-lumara/site/keystone.js uses to frame the arch off-centre.
+    // offset, the same trick reference-site1/site/keystone.js uses to frame the arch off-centre.
     // The travel to the second screen animates the same offset toward centre-bottom (update() below).
     resize(w, h) {
       vw = w; vh = h;

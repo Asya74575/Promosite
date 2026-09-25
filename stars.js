@@ -1,5 +1,5 @@
 // Hero sky: a twinkling star field with depth and the occasional shooting star, drawn on a 2D canvas.
-// Hidden among the stars is a faint constellation of the AWRIS canopy: an arc of brighter stars over a small
+// Hidden among the stars is a faint constellation of the Сайт 2 canopy: an arc of brighter stars over a small
 // cluster, like the logo's arch over the dotted Arab world. Its lines glow only for a moment during the descent,
 // so it reads as something to discover rather than a logo stamped on the sky.
 const TAU = Math.PI * 2;

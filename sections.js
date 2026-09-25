@@ -1,4 +1,4 @@
-// Content sections (origin: the AWRIS demo): history rail, searchable directory, newsroom with an in-page article
+// Content sections (origin: the Сайт 2 demo): history rail, searchable directory, newsroom with an in-page article
 // reader, FAQ accordion and a fitted SVG footer wordmark. Data lives in content.js; this file renders and wires it.
 // Every section is optional: its init returns early when the markup is missing.
 import { MEMBERS, ARTICLES } from "./content.js";
@@ -155,7 +155,7 @@ function initDirectory({ queueRefresh }) {
       status.textContent = n ? `${n} ${n === 1 ? "match" : "matches"} in ${groups.length} ${groups.length === 1 ? "country" : "countries"}` : "No matches";
       panel.innerHTML = n
         ? groups.map((g) => `<div class="dir-group"><h3>${esc(g.country)} <span class="mono">${g.hits.length}</span></h3>${list(g.hits, "ul")}</div>`).join("")
-        : `<p class="dir-empty">No member company matches “${esc(input.value.trim())}”. Try a shorter name, or <a href="mailto:Info@awris.com">ask the AWRIS team</a>.</p>`;
+        : `<p class="dir-empty">No member company matches “${esc(input.value.trim())}”. Try a shorter name, or <a href="mailto:info@site2.example">ask the Сайт 2 team</a>.</p>`;
     } else {
       const m = MEMBERS.find((x) => x.country === current);
       tabs.forEach((t) => {
@@ -298,7 +298,7 @@ function initReader({ gsap, lenis, reduce }) {
       <div class="reader__body">${a.body.map((p) => `<p>${esc(p)}</p>`).join("")}</div>
       ${a.gallery ? `<div class="reader__gallery">${a.gallery.map((src) => `<img src="${src}" alt="Photo from the ${esc(a.title)}" loading="lazy">`).join("")}</div>` : ""}
       <footer class="reader__foot">
-        <a class="mono" href="${a.source}" target="_blank" rel="noopener">Original on awris.com ↗</a>
+        <a class="mono" href="${a.source}" target="_blank" rel="noopener">Original on the Сайт 2 website ↗</a>
         <div class="reader__nav">
           ${newer ? `<button type="button" class="reader__step reader__step--newer" data-step="-1"><span class="mono">← Newer</span>${esc(newer.title)}</button>` : ""}
           ${older ? `<button type="button" class="reader__step reader__step--older" data-step="1"><span class="mono">Older →</span>${esc(older.title)}</button>` : ""}
